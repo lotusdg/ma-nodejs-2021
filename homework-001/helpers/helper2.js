@@ -1,30 +1,19 @@
 function findTopPrice(array) {
-  if (!Array.isArray(array)) array = require('../data.json');
+  if (!Array.isArray(array)) {
+    array = require('../data.json');
+  }
 
-  array.forEach((element) => {
-    if (element.pricePerItem === undefined)
-      element.totalPrice =
-        +element.pricePerKilo.substring(1).replace(/,/, '.') * element.weight;
-    else
-      element.totalPrice =
-        +element.pricePerItem.substring(1).replace(/,/, '.') * element.quantity;
-  });
+  const compare = (a, b) => {
+    const firstPrice =
+      (a.pricePerKilo || a.pricePerItem).replace(',', '.').slice(1) *
+      (a.weight || a.quantity);
+    const secondPrice =
+      (b.pricePerKilo || b.pricePerItem).replace(',', '.').slice(1) *
+      (b.weight || b.quantity);
+    return firstPrice - secondPrice;
+  };
 
-  array.sort(function (a, b) {
-    if (a.totalPrice > b.totalPrice) {
-      return 1;
-    }
-    if (a.totalPrice < b.totalPrice) {
-      return -1;
-    }
-    return 0;
-  });
-
-  array.forEach((element) => {
-    delete element.totalPrice;
-  });
-
-  return array[array.length - 1];
+  return array.sort(compare)[array.length - 1];
 }
 
 module.exports = { findTopPrice };

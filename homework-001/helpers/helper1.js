@@ -1,10 +1,5 @@
 function filterByItem(array, param, value) {
-  let result = [];
-  result = array.filter(
-    (element) =>
-      element.item === param &&
-      (element.weight === value || element.quantity === value),
-  );
+  const result = array.filter((element) => element[param] === value);
   return result;
 }
 
