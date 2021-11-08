@@ -16,10 +16,11 @@ function boot(array) {
   console.log('============= filterByWeight =============');
   console.log(filterByWeight);
   console.log('============= FindTopPriceFirst =============');
-  const findTopPriceFirst = findTopPrice(filterByOrange.concat(filterByWeight));
+  const concatArray = filterByOrange.concat(filterByWeight);
+  const findTopPriceFirst = findTopPrice(concatArray);
   console.log(findTopPriceFirst);
   console.log('============= Add price key for fruits again =============');
-  const addPriceAgain = addPrice(filterByOrange.concat(filterByWeight));
+  const addPriceAgain = addPrice(concatArray);
   console.log(addPriceAgain);
   console.log('============= FindTopPriceWithoutArguments =============');
   console.log(findTopPrice());
