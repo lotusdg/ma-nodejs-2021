@@ -21,6 +21,14 @@ function store(req, res) {
   res.write(message);
   res.end();
 }
+
+function filter(req, res) {
+  const { message, code } = services.filter(req.params);
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+
 function poststore(req, res) {
   const { message, code } = services.poststore(
     req.params,
@@ -36,4 +44,5 @@ module.exports = {
   notFound,
   store,
   poststore,
+  filter,
 };

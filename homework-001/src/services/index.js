@@ -1,3 +1,5 @@
+const data = require('../data.json');
+
 function home() {
   return {
     code: 200,
@@ -12,6 +14,20 @@ function notFound() {
   };
 }
 
+function filter(params) {
+  //let textStr = '';
+  let resultArray = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key of params.keys()) {
+    resultArray.push(key);
+  }
+
+  return {
+    code: 200,
+    message: JSON.stringify(resultArray || data),
+  };
+}
+
 function store(params) {
   let text = '';
   // eslint-disable-next-line no-restricted-syntax
@@ -19,16 +35,15 @@ function store(params) {
     console.log(key);
     text += `key is ${key} and value ${params.get(key)}\n`;
   }
-
   return {
     code: 200,
     message: text,
   };
-}
+  }
 
 function poststore(params, body) {
   let text = '';
-  // eslint-disable-next-line no-restricted-syntax
+  // eslint-disletable-next-line no-restricted-syntax
   for (const key of params.keys()) {
     console.log(key);
     text += `key is ${key} and value ${params.get(key)}\n`;
@@ -47,4 +62,5 @@ module.exports = {
   notFound,
   store,
   poststore,
+  filter,
 };
