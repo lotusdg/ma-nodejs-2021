@@ -15,16 +15,20 @@ function notFound() {
 }
 
 function filter(params) {
-  //let textStr = '';
-  let resultArray = [];
+  // let textStr = '';
+  const resultArray = [];
+  let result = [];
   // eslint-disable-next-line no-restricted-syntax
   for (const key of params.keys()) {
     resultArray.push(key);
   }
 
+  if (resultArray.length > 0) result = resultArray.concat(result);
+  else result = result.concat(data);
+
   return {
     code: 200,
-    message: JSON.stringify(resultArray || data),
+    message: JSON.stringify(result),
   };
 }
 
