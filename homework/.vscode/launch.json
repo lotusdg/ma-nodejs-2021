@@ -12,7 +12,8 @@
         "skipFiles": [
           "<node_internals>/**"
         ],
-        "type": "pwa-node"
+        "type": "pwa-node",
+        "start": "../src/index.js"
       }
 
     ]

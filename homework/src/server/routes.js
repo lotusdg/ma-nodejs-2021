@@ -12,5 +12,8 @@ module.exports = (req, res) => {
   if (pathname === '/postFilter' && method === 'POST')
     return controllers.postFilter(req, res);
 
+  if (pathname === '/topprice' && method === 'GET')
+  return controllers.filter(req, res);
+
   return controllers.notFound(req, res);
 };

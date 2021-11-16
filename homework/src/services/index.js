@@ -1,4 +1,4 @@
-const data = require('../data.json')
+const data = require('../data.json');
 
 const {
   helper1: filterByItem,
@@ -20,7 +20,7 @@ function notFound() {
   };
 }
 
-//---------------------------- filterGET -----------------------------------//
+// ---------------------------- filterGET --------------------------------- //
 
 function filter(params) {
   if (params.toString() === '') {
@@ -29,11 +29,11 @@ function filter(params) {
       message: data,
     };
   }
-  else {
     let result = data;
+    // eslint-disable-next-line no-restricted-syntax
     for (const key of params.keys()) {
         const element = params.get(key);
-        result = filterByItem(result, key, element)
+        result = filterByItem(result, key, element);
     }
     if (result.length > 0) {
       return {
@@ -41,37 +41,36 @@ function filter(params) {
         message: JSON.stringify(result),
       };
     }
-    else {
       return {
         code: 204,
         message: 'items not found',
       };
-    }
-  }
 }
 
-//--------------------------- validation ----------------------------------//
+// --------------------------- validation ---------------------------------- //
 
 function validateBodyReq (obj) {
 
-  function isWeightBased(obj) {
-    return obj.weight !== 'undefined' && typeof obj.pricePerKilo !== 'undefined';
+  function isWeightBased(isWeightObj) {
+    return isWeightObj.weight !== 'undefined'
+    && typeof isWeightObj.pricePerKilo !== 'undefined';
   }
 
-    if (typeof obj.item !== "undefined" && typeof obj.item !== 'string') {
+    if (typeof obj.item !== 'undefined' && typeof obj.item !== 'string') {
       throw new Error('"item" field isn\'t string type');
     }
-    if (typeof obj.type !== "undefined" && typeof obj.type !== 'string') {
+    if (typeof obj.type !== 'undefined' && typeof obj.type !== 'string') {
       throw new Error('"type" field isn\'t string type');
     }
-    if (typeof obj.quantity !== "undefined" && !isWeightBased(obj) && typeof obj.quantity !== 'number') {
+    if (typeof obj.quantity !== 'undefined'
+    && !isWeightBased(obj) && typeof obj.quantity !== 'number') {
       throw new Error('"quantity" field isn\'t number type');
     }
-    if (typeof obj.weight !== "undefined" && isWeightBased(obj) && typeof obj.weight !== 'number') {
+    if (typeof obj.weight !== 'undefined' && isWeightBased(obj) && typeof obj.weight !== 'number') {
       throw new Error('"weight" field isn\'t number type');
     }
     if (
-      typeof obj.pricePerItem !== "undefined" &&
+      typeof obj.pricePerItem !== 'undefined' &&
       !isWeightBased(obj) &&
       typeof obj.pricePerItem !== 'string' &&
       Number.isNaN(+obj.pricePerItem.replace('$', ''))
@@ -79,7 +78,7 @@ function validateBodyReq (obj) {
       throw new Error('"pricePerItem" field has incorrect type');
     }
     if (
-      typeof obj.pricePerKilo !== "undefined" &&
+      typeof obj.pricePerKilo !== 'undefined' &&
       isWeightBased(obj) &&
       typeof obj.pricePerKilo !== 'string' &&
       Number.isNaN(+obj.pricePerKilo.replace('$', ''))
@@ -105,17 +104,18 @@ function validationAndParse(bodyData) {
   return { err: null, validObj };
 }
 
-//------------------------ filterPost ---------------------------------//
+// ------------------------ filterPost ------------------------------- //
 
 function postFilter(body) {
   if (body.length > 0) {
     const { err, validObj } = validationAndParse(body);
     if (err === null) {
       let result = data;
+       // eslint-disable-next-line no-restricted-syntax
        for (const key in validObj) {
          if (Object.hasOwnProperty.call(validObj, key)) {
            const element = validObj[key];
-           result = filterByItem(result, key, element)
+           result = filterByItem(result, key, element);
          }
        }
        return {
@@ -123,19 +123,15 @@ function postFilter(body) {
         message: JSON.stringify(result),
       };
     }
-    else {
       return {
         code: err.code,
         message: err.message,
       };
-    }
   }
-  else {
     return {
       code: 200,
       message: data,
     };
-  }
 }
 
 module.exports = {
