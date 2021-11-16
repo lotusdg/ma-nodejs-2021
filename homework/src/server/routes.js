@@ -7,14 +7,10 @@ module.exports = (req, res) => {
   if (pathname === '/home' && method === 'GET')
     return controllers.home(req, res);
 
-  if (pathname === '/store' && method === 'GET')
-    return controllers.store(req, res);
-
   if (pathname === '/filter' && method === 'GET')
     return controllers.filter(req, res);
-
-  if (pathname === '/poststore' && method === 'POST')
-    return controllers.poststore(req, res);
+  if (pathname === '/postFilter' && method === 'POST')
+    return controllers.postFilter(req, res);
 
   return controllers.notFound(req, res);
 };

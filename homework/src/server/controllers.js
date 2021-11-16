@@ -15,25 +15,14 @@ function notFound(req, res) {
   res.end();
 }
 
-function store(req, res) {
-  const { message, code } = services.store(req.params);
-  res.statusCode = code;
-  res.write(message);
-  res.end();
-}
-
 function filter(req, res) {
   const { message, code } = services.filter(req.params);
   res.statusCode = code;
   res.write(message);
   res.end();
 }
-
-function poststore(req, res) {
-  const { message, code } = services.poststore(
-    req.params,
-    JSON.parse(req.body),
-  );
+function postFilter(req, res) {
+  const { message, code } = services.postFilter(req.body);
   res.statusCode = code;
   res.write(message);
   res.end();
@@ -42,7 +31,6 @@ function poststore(req, res) {
 module.exports = {
   home,
   notFound,
-  store,
-  poststore,
   filter,
+  postFilter,
 };
