@@ -28,9 +28,47 @@ function postFilter(req, res) {
   res.end();
 }
 
+function topPrice(req, res) {
+  const { message, code } = services.topPrice();
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+function findTopPricePost(req, res) {
+  const { message, code } = services.findTopPricePost(req.body);
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+
+function commonPriceGET(req, res) {
+  const { message, code } = services.commonPriceGET();
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+function commonPricePost(req, res) {
+  const { message, code } = services.commonPricePost(req.body);
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+
+function dataPost(req, res) {
+  const { message, code } = services.dataPost(req.body);
+  res.statusCode = code;
+  res.write(message);
+  res.end();
+}
+
 module.exports = {
   home,
   notFound,
   filter,
   postFilter,
+  topPrice,
+  findTopPricePost,
+  commonPriceGET,
+  commonPricePost,
+  dataPost,
 };

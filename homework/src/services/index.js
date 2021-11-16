@@ -1,9 +1,11 @@
+const fs = require('fs');
 const data = require('../data.json');
 
 const {
   helper1: filterByItem,
   helper3: addPrice,
   helper2: findTopPrice,
+  validator: validation,
 } = require('./helpers/index');
 
 function home() {
@@ -26,112 +28,184 @@ function filter(params) {
   if (params.toString() === '') {
     return {
       code: 200,
-      message: data,
+      message: JSON.stringify(data),
     };
   }
-    let result = data;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key of params.keys()) {
-        const element = params.get(key);
-        result = filterByItem(result, key, element);
-    }
-    if (result.length > 0) {
-      return {
-        code: 200,
-        message: JSON.stringify(result),
-      };
-    }
-      return {
-        code: 204,
-        message: 'items not found',
-      };
+  let result = data;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key of params.keys()) {
+    const element = params.get(key);
+    result = filterByItem(result, key, element);
+  }
+  if (result.length > 0) {
+    return {
+      code: 200,
+      message: JSON.stringify(result),
+    };
+  }
+  return {
+    code: 204,
+    message: 'items not found',
+  };
 }
 
 // --------------------------- validation ---------------------------------- //
 
-function validateBodyReq (obj) {
-
-  function isWeightBased(isWeightObj) {
-    return isWeightObj.weight !== 'undefined'
-    && typeof isWeightObj.pricePerKilo !== 'undefined';
-  }
-
-    if (typeof obj.item !== 'undefined' && typeof obj.item !== 'string') {
-      throw new Error('"item" field isn\'t string type');
-    }
-    if (typeof obj.type !== 'undefined' && typeof obj.type !== 'string') {
-      throw new Error('"type" field isn\'t string type');
-    }
-    if (typeof obj.quantity !== 'undefined'
-    && !isWeightBased(obj) && typeof obj.quantity !== 'number') {
-      throw new Error('"quantity" field isn\'t number type');
-    }
-    if (typeof obj.weight !== 'undefined' && isWeightBased(obj) && typeof obj.weight !== 'number') {
-      throw new Error('"weight" field isn\'t number type');
-    }
-    if (
-      typeof obj.pricePerItem !== 'undefined' &&
-      !isWeightBased(obj) &&
-      typeof obj.pricePerItem !== 'string' &&
-      Number.isNaN(+obj.pricePerItem.replace('$', ''))
-    ) {
-      throw new Error('"pricePerItem" field has incorrect type');
-    }
-    if (
-      typeof obj.pricePerKilo !== 'undefined' &&
-      isWeightBased(obj) &&
-      typeof obj.pricePerKilo !== 'string' &&
-      Number.isNaN(+obj.pricePerKilo.replace('$', ''))
-    ) {
-      throw new Error('"pricePerKilo" field has incorrect type');
-    }
-}
-
 function validationAndParse(bodyData) {
-  let validObj;
+  let validArray;
   try {
-    validObj = JSON.parse(bodyData);
-    validateBodyReq(validObj);
+    validArray = JSON.parse(bodyData);
+    validation(validArray);
   } catch (e) {
     return {
       err: {
         code: 400,
         message: `The Obj of items had not pass the validation\n${e.message}`,
       },
-      validObj: null,
+      validArray: null,
     };
   }
-  return { err: null, validObj };
+  return { err: null, validArray };
 }
 
 // ------------------------ filterPost ------------------------------- //
 
 function postFilter(body) {
   if (body.length > 0) {
-    const { err, validObj } = validationAndParse(body);
+    const { err, validArray } = validationAndParse(body);
     if (err === null) {
       let result = data;
-       // eslint-disable-next-line no-restricted-syntax
-       for (const key in validObj) {
-         if (Object.hasOwnProperty.call(validObj, key)) {
-           const element = validObj[key];
-           result = filterByItem(result, key, element);
-         }
-       }
-       return {
+      validArray.forEach((elementObj) => {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key in elementObj) {
+          if (Object.hasOwnProperty.call(elementObj, key)) {
+            const element = elementObj[key];
+            result = filterByItem(result, key, element);
+          }
+        }
+      });
+      return {
         code: 200,
         message: JSON.stringify(result),
       };
     }
-      return {
-        code: err.code,
-        message: err.message,
-      };
-  }
     return {
-      code: 200,
-      message: data,
+      code: err.code,
+      message: err.message,
     };
+  }
+  return {
+    code: 200,
+    message: data,
+  };
+}
+
+// ---------------------------- findTopPriceGET ----------------------------- //
+
+function topPrice() {
+  const result = findTopPrice(data);
+  return {
+    code: 200,
+    message: JSON.stringify(result),
+  };
+}
+
+// ------------------------- findTopPricePost ------------------------------- //
+
+function findTopPricePost(body) {
+  if (body.length > 0) {
+    const { err, validArray } = validationAndParse(body);
+    if (err === null) {
+      const result = findTopPrice(validArray);
+      return {
+        code: 200,
+        message: JSON.stringify(result),
+      };
+    }
+    return {
+      code: err.code,
+      message: err.message,
+    };
+  }
+  return {
+    code: 400,
+    message: 'The Obj of items had not pass the validation',
+  };
+}
+
+// ---------------------------- commonPriceGET ----------------------------- //
+
+function commonPriceGET() {
+  const result = addPrice(data);
+  return {
+    code: 200,
+    message: JSON.stringify(result),
+  };
+}
+
+// ------------------------- commonPricePOST ------------------------------- //
+
+function commonPricePost(body) {
+  if (body.length > 0) {
+    const { err, validArray } = validationAndParse(body);
+    if (err === null) {
+      const result = addPrice(validArray);
+      return {
+        code: 200,
+        message: JSON.stringify(result),
+      };
+    }
+    return {
+      code: err.code,
+      message: err.message,
+    };
+  }
+  return {
+    code: 400,
+    message: 'The Obj of items had not pass the validation',
+  };
+}
+
+// ---------------------------- dataPost ----------------------------- //
+
+function dataPost(body) {
+  if (body.length > 0) {
+    const { err } = validationAndParse(body);
+    if (err === null) {
+      try {
+        fs.renameSync('../../../data.json', '../../../data.json.bak');
+        // done
+      } catch (errDate) {
+        console.error(errDate);
+      }
+      try {
+        fs.renameSync('../../data.json', '../../data.json.bak');
+        // done
+      } catch (errDate) {
+        console.error(errDate);
+      }
+      try {
+        fs.renameSync('../data.json', '../data.json.bak');
+        // done
+      } catch (errDate) {
+        console.error(errDate);
+      }
+      // fs.renameSync('../data.json', '../data.json.bak');
+      // fs.appendFileSync('../data.json', body);
+      return {
+        code: 201,
+        message: 'The json file was rewritten',
+      };
+    }
+    return {
+      code: err.code,
+      message: err.message,
+    };
+  }
+  return {
+    code: 400,
+    message: 'The Obj of items had not pass the validation',
+  };
 }
 
 module.exports = {
@@ -139,4 +213,9 @@ module.exports = {
   notFound,
   filter,
   postFilter,
+  topPrice,
+  findTopPricePost,
+  commonPriceGET,
+  commonPricePost,
+  dataPost,
 };
