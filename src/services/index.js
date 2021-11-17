@@ -16,6 +16,13 @@ function successMessage(message) {
   };
 }
 
+function errorMessage(err) {
+  return {
+    code: err.code,
+    message: err.message,
+  };
+}
+
 function home() {
   return successMessage('home');
 }
@@ -78,10 +85,7 @@ function validationAndParse(bodyData) {
 function postFilter(body, params) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return {
-      code: err.code,
-      message: err.message,
-    };
+    errorMessage(err);
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
@@ -104,10 +108,7 @@ function topPrice() {
 function findTopPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return {
-      code: err.code,
-      message: err.message,
-    };
+    errorMessage(err);
   }
   const result = findTopPrice(validArray);
   return successMessage(result);
@@ -125,10 +126,7 @@ function commonPriceGET() {
 function commonPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return {
-      code: err.code,
-      message: err.message,
-    };
+    errorMessage(err);
   }
   const result = addPrice(validArray);
   return successMessage(result);
@@ -137,12 +135,9 @@ function commonPricePost(body) {
 // ---------------------------- dataPost ----------------------------- //
 
 function dataPost(body) {
-  const { err, validArray } = validationAndParse(body);
+  const { err } = validationAndParse(body);
   if (err != null) {
-    return {
-      code: err.code,
-      message: err.message,
-    };
+    errorMessage(err);
   }
   try {
     fs.writeFileSync(path.join(__dirname, '../data.json'), body);

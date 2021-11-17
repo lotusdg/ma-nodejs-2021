@@ -1,6 +1,7 @@
 const services = require('../services');
 
 function resFinish(res, code, message) {
+  res.setHeader('Content-Type', 'application/json');
   res.statusCode = code;
   res.write(message);
   res.end();
@@ -8,7 +9,6 @@ function resFinish(res, code, message) {
 
 function home(req, res) {
   const { message, code } = services.home();
-  res.setHeader('Content-Type', 'application/json');
   resFinish(res, code, message);
 }
 
