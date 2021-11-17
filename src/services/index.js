@@ -9,11 +9,15 @@ const {
   validator: validation,
 } = require('./helpers/index');
 
-function home() {
+function successMessage(message) {
   return {
     code: 200,
-    message: 'hello world',
+    message: JSON.stringify(message),
   };
+}
+
+function home() {
+  return successMessage('home');
 }
 
 function notFound() {
@@ -27,10 +31,7 @@ function notFound() {
 
 function filter(params) {
   if (params.toString() === '') {
-    return {
-      code: 200,
-      message: JSON.stringify(data),
-    };
+    successMessage(data);
   }
   let result = data;
   // eslint-disable-next-line no-restricted-syntax
@@ -39,10 +40,7 @@ function filter(params) {
     result = filterByItem(result, key, element);
   }
   if (result.length > 0) {
-    return {
-      code: 200,
-      message: JSON.stringify(result),
-    };
+    return successMessage(result);
   }
   return {
     code: 204,
@@ -53,144 +51,110 @@ function filter(params) {
 // --------------------------- validation ---------------------------------- //
 
 function validationAndParse(bodyData) {
-  let validArray;
-  try {
-    validArray = JSON.parse(bodyData);
-    validation(validArray);
-  } catch (e) {
-    return {
-      err: {
-        code: 400,
-        message: `The Obj of items had not pass the validation\n${e.message}`,
-      },
-      validArray: null,
-    };
+  if (bodyData.length > 0) {
+    let validArray;
+    try {
+      validArray = JSON.parse(bodyData);
+      validation(validArray);
+    } catch (e) {
+      return {
+        err: {
+          code: 400,
+          message: `The Obj of items had not pass the validation\n${e.message}`,
+        },
+        validArray: null,
+      };
+    }
+    return { err: null, validArray };
   }
-  return { err: null, validArray };
+  return {
+    code: 400,
+    message: 'The Obj of items had not pass the validation',
+  };
 }
 
 // ------------------------ filterPost ------------------------------- //
 
-function postFilter(body) {
-  if (body.length > 0) {
-    const { err, validArray } = validationAndParse(body);
-    if (err === null) {
-      let result = data;
-      validArray.forEach((elementObj) => {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const key in elementObj) {
-          if (Object.hasOwnProperty.call(elementObj, key)) {
-            const element = elementObj[key];
-            result = filterByItem(result, key, element);
-          }
-        }
-      });
-      return {
-        code: 200,
-        message: JSON.stringify(result),
-      };
-    }
+function postFilter(body, params) {
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
     return {
       code: err.code,
       message: err.message,
     };
   }
-  return {
-    code: 200,
-    message: data,
-  };
+  let result = validArray;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key of params.keys()) {
+    const element = params.get(key);
+    result = filterByItem(result, key, element);
+  }
+  return successMessage(result);
 }
 
 // ---------------------------- findTopPriceGET ----------------------------- //
 
 function topPrice() {
   const result = findTopPrice(data);
-  return {
-    code: 200,
-    message: JSON.stringify(result),
-  };
+  return successMessage(result);
 }
 
 // ------------------------- findTopPricePost ------------------------------- //
 
 function findTopPricePost(body) {
-  if (body.length > 0) {
-    const { err, validArray } = validationAndParse(body);
-    if (err === null) {
-      const result = findTopPrice(validArray);
-      return {
-        code: 200,
-        message: JSON.stringify(result),
-      };
-    }
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
     return {
       code: err.code,
       message: err.message,
     };
   }
-  return {
-    code: 400,
-    message: 'The Obj of items had not pass the validation',
-  };
+  const result = findTopPrice(validArray);
+  return successMessage(result);
 }
 
 // ---------------------------- commonPriceGET ----------------------------- //
 
 function commonPriceGET() {
   const result = addPrice(data);
-  return {
-    code: 200,
-    message: JSON.stringify(result),
-  };
+  return successMessage(result);
 }
 
 // ------------------------- commonPricePOST ------------------------------- //
 
 function commonPricePost(body) {
-  if (body.length > 0) {
-    const { err, validArray } = validationAndParse(body);
-    if (err === null) {
-      const result = addPrice(validArray);
-      return {
-        code: 200,
-        message: JSON.stringify(result),
-      };
-    }
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
     return {
       code: err.code,
       message: err.message,
     };
   }
-  return {
-    code: 400,
-    message: 'The Obj of items had not pass the validation',
-  };
+  const result = addPrice(validArray);
+  return successMessage(result);
 }
 
 // ---------------------------- dataPost ----------------------------- //
 
 function dataPost(body) {
-  if (body.length > 0) {
-    const { err } = validationAndParse(body);
-    if (err === null) {
-      fs.renameSync(
-        path.join(__dirname, '../data.json'),
-        path.join(__dirname, '../data.json.bak'),
-      );
-      fs.appendFileSync(path.join(__dirname, '../data.json'), body);
-      return {
-        code: 201,
-        message: 'The json file was rewritten',
-      };
-    }
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
     return {
       code: err.code,
       message: err.message,
     };
   }
+  try {
+    fs.writeFileSync(path.join(__dirname, '../data.json'), body);
+  } catch (e) {
+    return {
+      code: 400,
+      message: e.message,
+    };
+  }
   return {
-    code: 400,
-    message: 'The Obj of items had not pass the validation',
+    code: 201,
+    message: 'The json file was rewritten',
   };
 }
 
