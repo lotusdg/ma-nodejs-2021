@@ -85,7 +85,7 @@ function validationAndParse(bodyData) {
 function postFilter(body, params) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    errorMessage(err);
+    return errorMessage(err);
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
@@ -108,7 +108,7 @@ function topPrice() {
 function findTopPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    errorMessage(err);
+    return errorMessage(err);
   }
   const result = findTopPrice(validArray);
   return successMessage(result);
@@ -126,7 +126,7 @@ function commonPriceGET() {
 function commonPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    errorMessage(err);
+    return errorMessage(err);
   }
   const result = addPrice(validArray);
   return successMessage(result);
@@ -137,7 +137,7 @@ function commonPricePost(body) {
 function dataPost(body) {
   const { err } = validationAndParse(body);
   if (err != null) {
-    errorMessage(err);
+    return errorMessage(err);
   }
   try {
     fs.writeFileSync(path.join(__dirname, '../data.json'), body);
