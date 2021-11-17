@@ -1,2 +1,1 @@
-# ma-nodejs-2021
-Node.js course
+Node.js 2021
