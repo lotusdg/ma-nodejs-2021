@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const data = require('../data.json');
 
 const {
@@ -172,26 +173,11 @@ function dataPost(body) {
   if (body.length > 0) {
     const { err } = validationAndParse(body);
     if (err === null) {
-      try {
-        fs.renameSync('../../../data.json', '../../../data.json.bak');
-        // done
-      } catch (errDate) {
-        console.error(errDate);
-      }
-      try {
-        fs.renameSync('../../data.json', '../../data.json.bak');
-        // done
-      } catch (errDate) {
-        console.error(errDate);
-      }
-      try {
-        fs.renameSync('../data.json', '../data.json.bak');
-        // done
-      } catch (errDate) {
-        console.error(errDate);
-      }
-      // fs.renameSync('../data.json', '../data.json.bak');
-      // fs.appendFileSync('../data.json', body);
+      fs.renameSync(
+        path.join(__dirname, '../data.json'),
+        path.join(__dirname, '../data.json.bak'),
+      );
+      fs.appendFileSync(path.join(__dirname, '../data.json'), body);
       return {
         code: 201,
         message: 'The json file was rewritten',
