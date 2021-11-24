@@ -49,6 +49,11 @@ function dataPost(req, res) {
   resFinish(res, code, message);
 }
 
+function promiseGET(req, res) {
+  const { message, code } = services.promiseGET();
+  resFinish(res, code, message);
+}
+
 module.exports = {
   home,
   notFound,
@@ -59,4 +64,5 @@ module.exports = {
   commonPriceGET,
   commonPricePost,
   dataPost,
+  promiseGET,
 };

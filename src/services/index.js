@@ -11,6 +11,8 @@ const {
   httpCodes,
 } = require('./helpers/index');
 
+const discount = require('./helpers/discount');
+
 function createResponse(code, message) {
   return {
     code,
@@ -135,6 +137,20 @@ function dataPost(body) {
   return createResponse(httpCodes.ok, 'The json file was rewritten');
 }
 
+// ---------------------------- promiseGET ----------------------------- //
+
+function promiseGET() {
+  const repeat = () => {
+    discount((err, value) => {
+      if (err == null) {
+        return repeat();
+      }
+      return value;
+    });
+  };
+
+}
+
 module.exports = {
   home,
   notFound,
@@ -145,4 +161,5 @@ module.exports = {
   commonPriceGET,
   commonPricePost,
   dataPost,
+  promiseGET,
 };

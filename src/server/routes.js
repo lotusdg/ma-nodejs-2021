@@ -35,5 +35,9 @@ module.exports = (req, res) => {
     return controllers.dataPost(req, res);
   }
 
+  if (pathname === '/promise' && method === 'GET') {
+    return controllers.promiseGET(req, res);
+  }
+
   return controllers.notFound(req, res);
 };
