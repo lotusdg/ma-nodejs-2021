@@ -50,8 +50,11 @@ function dataPost(req, res) {
 }
 
 function promiseGET(req, res) {
-  const { message, code } = services.promiseGET();
-  resFinish(res, code, message);
+  services.promiseGET().then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, 400, e);
+  });
 }
 
 module.exports = {

@@ -140,15 +140,12 @@ function dataPost(body) {
 // ---------------------------- promiseGET ----------------------------- //
 
 function promiseGET() {
-  const repeat = () => {
+  return new Promise((resolve, reject) => {
     discount((err, value) => {
-      if (err == null) {
-        return repeat();
-      }
-      return value;
+      if (err == null) resolve({code:200, message: value});
+      reject(err);
     });
-  };
-
+  });
 }
 
 module.exports = {
