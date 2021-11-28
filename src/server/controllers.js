@@ -1,4 +1,5 @@
 const services = require('../services');
+const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
   res.setHeader('Content-Type', 'application/json');
@@ -53,7 +54,7 @@ function promiseGET(req, res) {
   services.promiseGET().then(({code, message}) => {
     resFinish(res, code, message);
   }).catch(e => {
-    resFinish(res, 400, e);
+    resFinish(res, httpCodes.badReq, {error: e.message});
   });
 }
 

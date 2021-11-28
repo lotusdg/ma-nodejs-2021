@@ -140,11 +140,56 @@ function dataPost(body) {
 // ---------------------------- promiseGET ----------------------------- //
 
 function promiseGET() {
-  return new Promise((resolve, reject) => {
-    discount((err, value) => {
-      if (err == null) resolve({code:200, message: value});
-      reject(err);
+
+  // const addDiscountPrice = (value, data) => {
+  //   const dataWithPrice = addPrice(data);
+  //   const dataWithPricePriceDiscount = dataWithPrice.map(e => {
+  //     let priceWithDiscount;
+  //     if(e.item === 'pineapple' && e.type === 'Red Spanish') {
+  //       priceWithDiscount = e.price - (e.price*(value*2))/100;
+  //     }
+  //     else if(e.item === 'orange' && e.type === 'Tangerine') {
+  //       priceWithDiscount = e.price -  (e.price*(value*3))/100;
+  //     }
+  //     else {
+  //       priceWithDiscount = e.price -  (e.price*value)/100;
+  //     }
+  //     return { ...e, priceWithDiscount };
+  //   });
+  //   return dataWithPricePriceDiscount;
+  // };
+
+  const addDiscountPrice = (value, data) => {
+    const result = addPrice(data).map(e => {
+      let priceWithDiscount;
+      const pineapple = 'pineapple';
+      const redSpanish = 'Red Spanish';
+      const orange = 'orange';
+      const tangerine = 'Tangerine';
+      if(e.item === pineapple && e.type === redSpanish) {
+        priceWithDiscount = e.price - (e.price * (value * 2)) / 100;
+      }
+      else if(e.item === orange && e.type === tangerine) {
+        priceWithDiscount = e.price - (e.price * (value * 3)) / 100;
+      }
+      else {
+        priceWithDiscount = e.price - (e.price * value) / 100;
+      }
+      return { ...e, priceWithDiscount: +priceWithDiscount.toFixed(2) };
     });
+    return result;
+  };
+
+  return new Promise((resolve, reject) => {
+    function discountCallback(err, value) {
+      if(err){
+          discount(discountCallback);
+      }else{
+        const fruitsWithDiscount = addDiscountPrice(value, data);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      }
+    }
+    discount(discountCallback);
   });
 }
 
