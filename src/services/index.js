@@ -9,10 +9,10 @@ const {
   helper2: findTopPrice,
   validator: validation,
   httpCodes,
+  addDiscountPrice,
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
-const { addDiscountPrice } = require('./helpers/addDiscountPrice');
 
 function createResponse(code, message) {
   return {
@@ -154,6 +154,26 @@ function promiseGET() {
   });
 }
 
+// ---------------------------- promisePOST ----------------------------- //
+
+function promisePOST(body) {
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
+    return createResponse(httpCodes.badReq, err.message);
+  }
+  return new Promise((resolve, reject) => {
+    function discountCallback(err, value) {
+      if(err){
+          discount(discountCallback);
+      }else{
+        const fruitsWithDiscount = addDiscountPrice(value, validArray);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      }
+    }
+    discount(discountCallback);
+  });
+}
+
 module.exports = {
   home,
   notFound,
@@ -165,4 +185,5 @@ module.exports = {
   commonPricePost,
   dataPost,
   promiseGET,
+  promisePOST,
 };

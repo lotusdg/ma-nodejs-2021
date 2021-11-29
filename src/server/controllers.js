@@ -58,6 +58,14 @@ function promiseGET(req, res) {
   });
 }
 
+function promisePOST(req, res) {
+  services.promisePOST(req.body).then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
 module.exports = {
   home,
   notFound,
@@ -69,4 +77,5 @@ module.exports = {
   commonPricePost,
   dataPost,
   promiseGET,
+  promisePOST,
 };
