@@ -4,7 +4,7 @@ const { httpCodes } = require('../services/helpers');
 function resFinish(res, code, message) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = code;
-  res.write(message);
+  res.write(JSON.stringify(message));
   res.end();
 }
 
@@ -62,7 +62,7 @@ function promisePOST(req, res) {
   services.promisePOST(req.body).then(({code, message}) => {
     resFinish(res, code, message);
   }).catch(e => {
-    resFinish(res, 400, {error: e.message});
+    resFinish(res, httpCodes.badReq, {error: e.message});
   });
 }
 

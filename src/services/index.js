@@ -17,10 +17,7 @@ const {
 const discount = require('./helpers/discount');
 
 function createResponse(code, message) {
-  return {
-    code,
-    message: JSON.stringify(message),
-  };
+  return {code,  message};
 }
 
 function home() {
@@ -54,7 +51,7 @@ function filter(params) {
 function postFilter(body, params) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, { message: err.message });
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
@@ -77,7 +74,7 @@ function topPrice() {
 function findTopPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   const result = findTopPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -95,7 +92,7 @@ function commonPriceGET() {
 function commonPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   const result = addPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -106,12 +103,12 @@ function commonPricePost(body) {
 function dataPost(body) {
   const { err } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   try {
     fs.writeFileSync(path.join(__dirname, '../data.json'), body);
   } catch (e) {
-    return createResponse(httpCodes.badReq, e.message);
+    return createResponse(httpCodes.badReq, {error: e.message});
   }
   return createResponse(httpCodes.ok, 'The json file was rewritten');
 }
@@ -138,7 +135,7 @@ function promisePOST(body) {
   return new Promise((resolve, reject) => {
     const { err, validArray } = validationAndParse(body);
     if (err != null) {
-      reject(new Error(`${err.message}`));
+      return reject(new Error(`${err.error}`));
     }
     function discountCallback(err, value) {
       if(err){

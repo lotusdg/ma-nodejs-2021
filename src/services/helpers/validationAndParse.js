@@ -1,29 +1,24 @@
 const { validateBodyReq } = require("./validator");
 
-function validationAndParse(bodyData) {
-  if (bodyData.length > 0) {
-    let validArray;
-    try {
-      validArray = JSON.parse(bodyData);
-      validateBodyReq(validArray);
-    } catch (e) {
-      return {
-        err: {
-          code: 400,
-          message: `The Obj of items had not pass the validation\n${e.message}`,
-        },
-        validArray: null,
-      };
-    }
-    return { err: null, validArray };
-  }
+const validationResult = (error, validArray) => {
   return {
-        err: {
-          code: 400,
-          message: `The Obj of items had not pass the validation\n${e.message}`,
-        },
-        validArray: null,
-      };
+    err: error ? {error} : null,
+    validArray: validArray,
+  };
+}
+
+const validationAndParse = (bodyData) => {
+  if (!bodyData || bodyData.length <= 0) {
+    return validationResult('Data is missing', null);
+  }
+  let validArray;
+  try {
+    validArray = JSON.parse(bodyData);
+    validateBodyReq(validArray);
+  } catch (e) {
+    return validationResult(`The Obj of items had not pass the validation\n${e.message}`, null);
+  }
+  return validationResult(null, validArray);
 }
 
 module.exports = { validationAndParse }
