@@ -110,7 +110,7 @@ function dataPost(body) {
   } catch (e) {
     return createResponse(httpCodes.badReq, {error: e.message});
   }
-  return createResponse(httpCodes.ok, 'The json file was rewritten');
+  return createResponse(httpCodes.ok, { message: 'The json file was rewritten' });
 }
 
 // ---------------------------- promiseGET ----------------------------- //
