@@ -67,8 +67,11 @@ function promisePOST(req, res) {
 }
 
 function promisifyGET(req, res) {
-  const {message, code} = services.promisifyGET();
-  resFinish(res, code, message);
+  services.promisifyGET().then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
 }
 
 module.exports = {

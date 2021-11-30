@@ -152,12 +152,14 @@ function promisePOST(body) {
 // ---------------------------- promisifyGET ----------------------------- //
 
 function promisifyGET() {
-  const discountify = util.promisify(discount);
-  discountify().then(value => {
-    const fruitsWithDiscount = addDiscountPrice(value, data);
-    return createResponse(httpCodes.ok, fruitsWithDiscount);
-  }).catch(err => {
-
+  const discountPromisify = util.promisify(discount);
+  return new Promise((resolve) => {
+    discountPromisify()
+      .then(value => {
+        const fruitsWithDiscount = addDiscountPrice(value, data);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      })
+      .catch(() => promisifyGET())
   })
 }
 
