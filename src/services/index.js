@@ -159,8 +159,26 @@ function promisifyGET() {
         const fruitsWithDiscount = addDiscountPrice(value, data);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
-      .catch(() => promisifyGET())
-  })
+      .catch(() => promisifyGET());
+  });
+}
+
+// ---------------------------- promisifyPOST ----------------------------- //
+
+function promisifyPOST(body) {
+  const discountPromisify = util.promisify(discount);
+  return new Promise((resolve, reject) => {
+    const { err, validArray } = validationAndParse(body);
+    if (err != null) {
+      return reject(new Error(`${err.error}`));
+    }
+    discountPromisify()
+      .then(value => {
+        const fruitsWithDiscount = addDiscountPrice(value, validArray);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      })
+      .catch(() => promisifyPOST());
+  });
 }
 
 module.exports = {
@@ -177,4 +195,5 @@ module.exports = {
   promisePOST,
   promisifyGET,
   createResponse,
+  promisifyPOST,
 };

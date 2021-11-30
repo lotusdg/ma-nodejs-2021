@@ -47,5 +47,9 @@ module.exports = (req, res) => {
     return controllers.promisifyGET(req, res);
   }
 
+  if (pathname === '/discount/promisify' && method === 'POST') {
+    return controllers.promisifyPOST(req, res);
+  }
+
   return controllers.notFound(req, res);
 };

@@ -74,6 +74,14 @@ function promisifyGET(req, res) {
   });
 }
 
+function promisifyPOST(req, res) {
+  services.promisifyPOST(req.body).then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
 module.exports = {
   home,
   notFound,
@@ -87,4 +95,5 @@ module.exports = {
   promiseGET,
   promisePOST,
   promisifyGET,
+  promisifyPOST,
 };
