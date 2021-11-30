@@ -4,6 +4,7 @@ const { addPrice } = require('./helper3');
 const { validateBodyReq } = require('./validator');
 const { httpCodes } = require('./httpCodes');
 const { addDiscountPrice } = require('./addDiscountPrice');
+const { validationAndParse } = require('./validationAndParse')
 
 module.exports = {
   helper1: filterByItem,
@@ -12,4 +13,5 @@ module.exports = {
   validator: validateBodyReq,
   httpCodes,
   addDiscountPrice,
+  validationAndParse,
 };

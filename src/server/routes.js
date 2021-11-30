@@ -35,12 +35,16 @@ module.exports = (req, res) => {
     return controllers.dataPost(req, res);
   }
 
-  if (pathname === '/promise' && method === 'GET') {
+  if (pathname === '/discount/promise' && method === 'GET') {
     return controllers.promiseGET(req, res);
   }
 
-  if (pathname === '/promise' && method === 'POST') {
+  if (pathname === '/discount/promise' && method === 'POST') {
     return controllers.promisePOST(req, res);
+  }
+
+  if (pathname === '/discount/promisifyGET' && method === 'POST') {
+    return controllers.promisifyGET(req, res);
   }
 
   return controllers.notFound(req, res);

@@ -1,6 +1,7 @@
 const { ok } = require('assert');
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 const data = require('../data.json');
 
 const {
@@ -10,6 +11,7 @@ const {
   validator: validation,
   httpCodes,
   addDiscountPrice,
+  validationAndParse,
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
@@ -45,30 +47,6 @@ function filter(params) {
     return createResponse(httpCodes.ok, result);
   }
   return createResponse(httpCodes.badReq, { message: 'items not found' });
-}
-
-// --------------------------- validation ---------------------------------- //
-
-function validationAndParse(bodyData) {
-  if (bodyData.length > 0) {
-    let validArray;
-    try {
-      validArray = JSON.parse(bodyData);
-      validation(validArray);
-    } catch (e) {
-      return {
-        err: {
-          code: 400,
-          message: `The Obj of items had not pass the validation\n${e.message}`,
-        },
-        validArray: null,
-      };
-    }
-    return { err: null, validArray };
-  }
-  return createResponse(httpCodes.badReq, {
-    message: 'items dont pass the validation',
-  });
 }
 
 // ------------------------ filterPost ------------------------------- //
@@ -174,6 +152,19 @@ function promisePOST(body) {
   });
 }
 
+// ---------------------------- promisifyGET ----------------------------- //
+
+function promisifyGET() {
+  const discountify = util.promisify(discount);
+  discountify().then(value => {
+    const fruitsWithDiscount = addDiscountPrice(value, data);
+    return createResponse(httpCodes.ok, fruitsWithDiscount);
+  }).catch(err => {
+
+  })
+}
+
+
 module.exports = {
   home,
   notFound,
@@ -186,4 +177,6 @@ module.exports = {
   dataPost,
   promiseGET,
   promisePOST,
+  promisifyGET,
+  createResponse,
 };

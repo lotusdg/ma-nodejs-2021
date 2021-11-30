@@ -66,6 +66,11 @@ function promisePOST(req, res) {
   });
 }
 
+function promisifyGET(req, res) {
+  const {message, code} = services.promisifyGET();
+  resFinish(res, code, message);
+}
+
 module.exports = {
   home,
   notFound,
@@ -78,4 +83,5 @@ module.exports = {
   dataPost,
   promiseGET,
   promisePOST,
+  promisifyGET,
 };
