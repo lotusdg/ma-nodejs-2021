@@ -17,7 +17,13 @@ function validationAndParse(bodyData) {
     }
     return { err: null, validArray };
   }
-  return {code: 400, message: 'items dont pass the validation'};
+  return {
+        err: {
+          code: 400,
+          message: `The Obj of items had not pass the validation\n${e.message}`,
+        },
+        validArray: null,
+      };
 }
 
 module.exports = { validationAndParse }

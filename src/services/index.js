@@ -135,11 +135,11 @@ function promiseGET() {
 // ---------------------------- promisePOST ----------------------------- //
 
 function promisePOST(body) {
-  const { err, validArray } = validationAndParse(body);
-  if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
-  }
   return new Promise((resolve, reject) => {
+    const { err, validArray } = validationAndParse(body);
+    if (err != null) {
+      reject(new Error(`${err.message}`));
+    }
     function discountCallback(err, value) {
       if(err){
           discount(discountCallback);
@@ -163,7 +163,6 @@ function promisifyGET() {
 
   })
 }
-
 
 module.exports = {
   home,
