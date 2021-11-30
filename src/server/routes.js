@@ -51,5 +51,13 @@ module.exports = (req, res) => {
     return controllers.promisifyPOST(req, res);
   }
 
+  if (pathname === '/discount/async' && method === 'GET') {
+    return controllers.discountAsyncGET(req, res);
+  }
+
+  if (pathname === '/discount/async' && method === 'POST') {
+    return controllers.discountAsyncPOST(req, res);
+  }
+
   return controllers.notFound(req, res);
 };

@@ -116,7 +116,7 @@ function dataPost(body) {
 // ---------------------------- promiseGET ----------------------------- //
 
 function promiseGET() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     function discountCallback(err, value) {
       if(err){
           discount(discountCallback);
@@ -181,6 +181,20 @@ function promisifyPOST(body) {
   });
 }
 
+// ---------------------------- AsyncGET ----------------------------- //
+
+async function discountAsyncGET() {
+  const { code, message } = await promiseGET();
+  return createResponse(code, message);
+}
+
+// ---------------------------- AsyncPOST ----------------------------- //
+
+async function discountAsyncPOST(body) {
+  const { code, message } = await promisePOST(body);
+  return createResponse(code, message);
+}
+
 module.exports = {
   home,
   notFound,
@@ -196,4 +210,6 @@ module.exports = {
   promisifyGET,
   createResponse,
   promisifyPOST,
+  discountAsyncGET,
+  discountAsyncPOST,
 };

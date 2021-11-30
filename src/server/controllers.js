@@ -82,6 +82,22 @@ function promisifyPOST(req, res) {
   });
 }
 
+function discountAsyncGET(req, res) {
+  services.discountAsyncGET().then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
+function discountAsyncPOST(req, res) {
+  services.discountAsyncPOST(req.body).then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
 module.exports = {
   home,
   notFound,
@@ -96,4 +112,6 @@ module.exports = {
   promisePOST,
   promisifyGET,
   promisifyPOST,
+  discountAsyncGET,
+  discountAsyncPOST,
 };
