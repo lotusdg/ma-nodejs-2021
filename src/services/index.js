@@ -165,7 +165,7 @@ function promisifyPOST(body) {
         const fruitsWithDiscount = addDiscountPrice(value, validArray);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
-      .catch(() => promisifyPOST(validArray));
+      .catch(() => promisifyPOST(body));
   });
 }
 
