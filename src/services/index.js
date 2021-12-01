@@ -1,21 +1,22 @@
-const { ok } = require('assert');
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
 const data = require('../data.json');
 
 const {
   helper1: filterByItem,
   helper3: addPrice,
   helper2: findTopPrice,
-  validator: validation,
   httpCodes,
+  addDiscountPrice,
+  validationAndParse,
+  addDiscountPromise,
 } = require('./helpers/index');
 
+const discount = require('./helpers/discount');
+
 function createResponse(code, message) {
-  return {
-    code,
-    message: JSON.stringify(message),
-  };
+  return {code,  message};
 }
 
 function home() {
@@ -44,36 +45,12 @@ function filter(params) {
   return createResponse(httpCodes.badReq, { message: 'items not found' });
 }
 
-// --------------------------- validation ---------------------------------- //
-
-function validationAndParse(bodyData) {
-  if (bodyData.length > 0) {
-    let validArray;
-    try {
-      validArray = JSON.parse(bodyData);
-      validation(validArray);
-    } catch (e) {
-      return {
-        err: {
-          code: 400,
-          message: `The Obj of items had not pass the validation\n${e.message}`,
-        },
-        validArray: null,
-      };
-    }
-    return { err: null, validArray };
-  }
-  return createResponse(httpCodes.badReq, {
-    message: 'items dont pass the validation',
-  });
-}
-
 // ------------------------ filterPost ------------------------------- //
 
 function postFilter(body, params) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, { message: err.message });
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
@@ -96,7 +73,7 @@ function topPrice() {
 function findTopPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   const result = findTopPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -114,7 +91,7 @@ function commonPriceGET() {
 function commonPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   const result = addPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -125,14 +102,85 @@ function commonPricePost(body) {
 function dataPost(body) {
   const { err } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, err.message);
+    return createResponse(httpCodes.badReq, {error: err.error});
   }
   try {
     fs.writeFileSync(path.join(__dirname, '../data.json'), body);
   } catch (e) {
-    return createResponse(httpCodes.badReq, e.message);
+    return createResponse(httpCodes.badReq, {error: e.message});
   }
-  return createResponse(httpCodes.ok, 'The json file was rewritten');
+  return createResponse(httpCodes.ok,
+    { message: 'The json file was rewritten' });
+}
+
+// ---------------------------- promiseGET ----------------------------- //
+
+function promiseGET() {
+  return new Promise((resolve) => {
+    addDiscountPromise(data).then((fruitsWithDiscount) => {
+      resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+    });
+  });
+}
+
+// ---------------------------- promisePOST ----------------------------- //
+
+function promisePOST(body) {
+  return new Promise((resolve, reject) => {
+    const { err, validArray } = validationAndParse(body);
+    if (err != null) {
+      return reject(new Error(`${err.error}`));
+    }
+    addDiscountPromise(validArray).then((fruitsWithDiscount) => {
+      resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+    });
+  });
+}
+
+// ---------------------------- promisifyGET ----------------------------- //
+
+function promisifyGET() {
+  const discountPromisify = util.promisify(discount);
+  return new Promise((resolve) => {
+    discountPromisify()
+      .then(value => {
+        const fruitsWithDiscount = addDiscountPrice(value, data);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      })
+      .catch(() => promisifyGET());
+  });
+}
+
+// ---------------------------- promisifyPOST ----------------------------- //
+
+function promisifyPOST(body) {
+  const discountPromisify = util.promisify(discount);
+  return new Promise((resolve, reject) => {
+    const { err, validArray } = validationAndParse(body);
+    if (err != null) {
+      return reject(new Error(`${err.error}`));
+    }
+    discountPromisify()
+      .then(value => {
+        const fruitsWithDiscount = addDiscountPrice(value, validArray);
+        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+      })
+      .catch(() => promisifyPOST(body));
+  });
+}
+
+// ---------------------------- AsyncGET ----------------------------- //
+
+async function discountAsyncGET() {
+  const { code, message } = await promiseGET();
+  return createResponse(code, message);
+}
+
+// ---------------------------- AsyncPOST ----------------------------- //
+
+async function discountAsyncPOST(body) {
+    const { code, message } = await promisePOST(body);
+    return createResponse(code, message);
 }
 
 module.exports = {
@@ -145,4 +193,11 @@ module.exports = {
   commonPriceGET,
   commonPricePost,
   dataPost,
+  promiseGET,
+  promisePOST,
+  promisifyGET,
+  createResponse,
+  promisifyPOST,
+  discountAsyncGET,
+  discountAsyncPOST,
 };

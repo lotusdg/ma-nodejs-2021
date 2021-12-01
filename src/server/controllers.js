@@ -1,9 +1,10 @@
 const services = require('../services');
+const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
   res.setHeader('Content-Type', 'application/json');
   res.statusCode = code;
-  res.write(message);
+  res.write(JSON.stringify(message));
   res.end();
 }
 
@@ -49,6 +50,58 @@ function dataPost(req, res) {
   resFinish(res, code, message);
 }
 
+function promiseGET(req, res) {
+  services.promiseGET().then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
+function promisePOST(req, res) {
+  services.promisePOST(req.body).then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
+function promisifyGET(req, res) {
+  services.promisifyGET().then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
+function promisifyPOST(req, res) {
+  services.promisifyPOST(req.body).then(({code, message}) => {
+    resFinish(res, code, message);
+  }).catch(e => {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  });
+}
+
+async function discountAsyncGET(req, res) {
+  try {
+    const {code, message} = await services.discountAsyncGET();
+    resFinish(res, code, message);
+  }
+  catch(e) {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  }
+}
+
+async function discountAsyncPOST(req, res) {
+  try {
+    const {code, message} = await services.discountAsyncPOST(req.body);
+    resFinish(res, code, message);
+  }
+  catch(e) {
+    resFinish(res, httpCodes.badReq, {error: e.message});
+  }
+}
+
 module.exports = {
   home,
   notFound,
@@ -59,4 +112,10 @@ module.exports = {
   commonPriceGET,
   commonPricePost,
   dataPost,
+  promiseGET,
+  promisePOST,
+  promisifyGET,
+  promisifyPOST,
+  discountAsyncGET,
+  discountAsyncPOST,
 };
