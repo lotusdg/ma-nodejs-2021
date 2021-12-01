@@ -82,20 +82,24 @@ function promisifyPOST(req, res) {
   });
 }
 
-function discountAsyncGET(req, res) {
-  services.discountAsyncGET().then(({code, message}) => {
+async function discountAsyncGET(req, res) {
+  try {
+    const {code, message} = await services.discountAsyncGET();
     resFinish(res, code, message);
-  }).catch(e => {
+  }
+  catch(e) {
     resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  }
 }
 
-function discountAsyncPOST(req, res) {
-  services.discountAsyncPOST(req.body).then(({code, message}) => {
+async function discountAsyncPOST(req, res) {
+  try {
+    const {code, message} = await services.discountAsyncPOST(req.body);
     resFinish(res, code, message);
-  }).catch(e => {
+  }
+  catch(e) {
     resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  }
 }
 
 module.exports = {
