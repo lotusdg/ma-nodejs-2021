@@ -1,4 +1,3 @@
-const { ok } = require('assert');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -8,10 +7,10 @@ const {
   helper1: filterByItem,
   helper3: addPrice,
   helper2: findTopPrice,
-  validator: validation,
   httpCodes,
   addDiscountPrice,
   validationAndParse,
+  addDiscountPromise,
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
@@ -110,22 +109,17 @@ function dataPost(body) {
   } catch (e) {
     return createResponse(httpCodes.badReq, {error: e.message});
   }
-  return createResponse(httpCodes.ok, { message: 'The json file was rewritten' });
+  return createResponse(httpCodes.ok,
+    { message: 'The json file was rewritten' });
 }
 
 // ---------------------------- promiseGET ----------------------------- //
 
 function promiseGET() {
   return new Promise((resolve) => {
-    function discountCallback(err, value) {
-      if(err){
-          discount(discountCallback);
-      }else{
-        const fruitsWithDiscount = addDiscountPrice(value, data);
-        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
-      }
-    }
-    discount(discountCallback);
+    addDiscountPromise(data).then((fruitsWithDiscount) => {
+      resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+    });
   });
 }
 
@@ -137,15 +131,9 @@ function promisePOST(body) {
     if (err != null) {
       return reject(new Error(`${err.error}`));
     }
-    function discountCallback(err, value) {
-      if(err){
-          discount(discountCallback);
-      }else{
-        const fruitsWithDiscount = addDiscountPrice(value, validArray);
-        resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
-      }
-    }
-    discount(discountCallback);
+    addDiscountPromise(validArray).then((fruitsWithDiscount) => {
+      resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
+    });
   });
 }
 
