@@ -35,6 +35,10 @@ module.exports = (req, res) => {
     return controllers.dataPost(req, res);
   }
 
+  if (pathname === '/data' && method === 'PUT') {
+    return controllers.dataPUT(req, res);
+  }
+
   if (pathname === '/discount/promise' && method === 'GET') {
     return controllers.promiseGET(req, res);
   }

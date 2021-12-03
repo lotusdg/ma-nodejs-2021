@@ -7,13 +7,13 @@
       
       {
         "name": "Launch Program",
-        "program": "${workspaceFolder}/src/index.js",
+        "program": "${workspaceFolder}/src/app.js",
         "request": "launch",
         "skipFiles": [
           "<node_internals>/**"
         ],
         "type": "pwa-node",
-        "start": "../src/index.js"
+        "start": "../src/app.js"
       }
 
     ]
