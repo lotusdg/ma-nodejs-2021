@@ -50,11 +50,6 @@ function dataPost(req, res) {
   resFinish(res, code, message);
 }
 
-function dataPUT(req, res) {
-  const { message, code } = services.dataPUT();
-  resFinish(res, code, message);
-}
-
 function promiseGET(req, res) {
   services
     .promiseGET()
@@ -114,6 +109,16 @@ async function discountAsyncPOST(req, res) {
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function dataPUT(req, res) {
+  try {
+    await services.uploadCSV(req);
+  }
+  catch (e) {
+    console.error('Failed to upload CSV', e);
+    resFinish(res, 500, { error: e.message });
   }
 }
 

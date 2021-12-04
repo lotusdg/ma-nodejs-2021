@@ -2,6 +2,7 @@ const controllers = require('./controllers');
 
 module.exports = (req, res) => {
   const { pathname, method } = req;
+  const { url } = req;
 
   if (pathname === '/' && method === 'GET') {
     return controllers.home(req, res);
@@ -35,7 +36,7 @@ module.exports = (req, res) => {
     return controllers.dataPost(req, res);
   }
 
-  if (pathname === '/data' && method === 'PUT') {
+  if (url === '/data' && method === 'PUT') {
     return controllers.dataPUT(req, res);
   }
 

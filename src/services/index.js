@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const { pipeline } = require('stream');
+const { promisify } = require('util');
 const data = require('../data.json');
 
 const {
@@ -14,6 +16,7 @@ const {
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
+const { createCsvToJson } = require('./helpers/createCsvToJson');
 
 function createResponse(code, message) {
   return {code,  message};
@@ -183,6 +186,24 @@ async function discountAsyncPOST(body) {
     return createResponse(code, message);
 }
 
+// ---------------------------- uploadCSV ----------------------------- //
+
+async function uploadCSV(req) {
+  const promisifyPipeline = promisify(pipeline);
+  const fileName = Date.now();
+  const filePath = `./upload/${fileName}.json`;
+  const outputStream = fs.createWriteStream(filePath);
+
+  const csvToJson = createCsvToJson();
+
+  try {
+    await promisifyPipeline(req, csvToJson, outputStream);
+  }
+  catch (e) {
+    console.log('CSV pipeline is failed',e);
+  }
+}
+
 module.exports = {
   home,
   notFound,
@@ -200,4 +221,5 @@ module.exports = {
   promisifyPOST,
   discountAsyncGET,
   discountAsyncPOST,
+  uploadCSV
 };

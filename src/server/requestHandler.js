@@ -1,7 +1,6 @@
 const routes = require('./routes');
 
 module.exports = (req, res) => {
-  // if() --if csv
 
   const {
     url,
@@ -9,6 +8,12 @@ module.exports = (req, res) => {
   } = req;
 
   const { pathname, searchParams } = new URL(url, `https://${host}`);
+
+   if(req.headers['content-type'] === 'text/csv') {
+    routes(req, res);
+      // .catch(err => console.error('CSV handler failed', err));
+    return;
+   }
 
   let body = [];
 
