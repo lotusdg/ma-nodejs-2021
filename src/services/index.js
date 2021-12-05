@@ -191,8 +191,9 @@ async function discountAsyncPOST(body) {
 async function uploadCSV(req) {
   const promisifyPipeline = promisify(pipeline);
   const fileName = Date.now();
-  const filePath = `./upload/${fileName}.json`;
-  const outputStream = fs.createWriteStream(filePath);
+  // const filePath = `./upload/${fileName}.json`;
+  const outputStream =
+    fs.createWriteStream(path.join(__dirname, `./upload/${fileName}.json`));
 
   const csvToJson = createCsvToJson();
 
