@@ -17,6 +17,7 @@
     "prettier": "2.4.1"
   },
   "dependencies": {
-    "eslint-config-prettier": "^8.3.0"
+    "eslint-config-prettier": "^8.3.0",
+    "lodash.isequal": "^4.5.0"
   }
 }

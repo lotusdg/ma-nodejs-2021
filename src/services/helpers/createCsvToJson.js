@@ -1,4 +1,5 @@
 const { Transform } = require('stream');
+const isEqual = require('lodash.isequal');
 
 function regExp(str) {
   return str
@@ -31,6 +32,19 @@ function chunkToJson(strChunk, arrayChunk, headers) {
   return result;
 }
 
+function deleteDoubles(array) {
+
+  function objWithoutMeasureValue(obj) {
+    // eslint-disable-next-line prefer-object-spread
+    const resultObj = Object.assign({}, obj);
+    delete resultObj.measureValue;
+    return resultObj;
+  }
+
+  // reduce
+
+}
+
 function createCsvToJson() {
   let isFirst = true;
   let headers;
@@ -47,6 +61,8 @@ function createCsvToJson() {
 
       isFirst = false;
 
+      // result = deleteDoubles(result);
+
       callback(null, JSON.stringify(result));
 
       return;
@@ -62,7 +78,7 @@ function createCsvToJson() {
     callback(null, JSON.stringify(result));
   };
 
-  const flush = (callback) => {
+  const flush = () => {
     console.log('No more data to read.');
     // callback(null, '');
   };
