@@ -1,49 +1,6 @@
 const { Transform } = require('stream');
-const isEqual = require('lodash.isequal');
-
-function regExp(str) {
-  return str
-    .replace(/((?<=\$\d)|(?<=\$\d\d)|(?<=\$\d\d\d)|(?<=\$\d\d\d\d)),/g, '.')
-    .replace('"', '')
-    .replace('"', '')
-    .split(',');
-}
-
-function chunkToJson(strChunk, arrayChunk, headers) {
-  // const lastLineLength = regExp(arrayChunk[arrayChunk.length-1]).length;
-  let arrayChunkLength;
-
-  if (strChunk[strChunk.length - 1] === '\n') {
-    arrayChunkLength = arrayChunk.length;
-  } else {
-    arrayChunkLength = arrayChunk.length - 1;
-  }
-
-  const result = [];
-
-  for (let i = 1; i < arrayChunkLength; i++) {
-    const obj = {};
-    const currentline = regExp(arrayChunk[i]);
-    for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
-    }
-    if (obj[headers[0]].length > 0) result.push(obj);
-  }
-  return result;
-}
-
-function deleteDoubles(array) {
-
-  function objWithoutMeasureValue(obj) {
-    // eslint-disable-next-line prefer-object-spread
-    const resultObj = Object.assign({}, obj);
-    delete resultObj.measureValue;
-    return resultObj;
-  }
-
-  // reduce
-
-}
+const { chunkToJson } = require('./chunkToJson');
+const { deleteDoubles } = require('./deleteDoubles');
 
 function createCsvToJson() {
   let isFirst = true;
@@ -61,9 +18,9 @@ function createCsvToJson() {
 
       isFirst = false;
 
-      // result = deleteDoubles(result);
+      const resultWithoutDoubles = deleteDoubles(result);
 
-      callback(null, JSON.stringify(result));
+      callback(null, JSON.stringify(resultWithoutDoubles));
 
       return;
     }
@@ -75,7 +32,9 @@ function createCsvToJson() {
 
     const result = chunkToJson(strChunk, arrayChunk, headers);
 
-    callback(null, JSON.stringify(result));
+    const resultWithoutDoubles = deleteDoubles(result);
+
+    callback(null, JSON.stringify(resultWithoutDoubles));
   };
 
   const flush = () => {
