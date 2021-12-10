@@ -17,6 +17,7 @@ const {
 
 const discount = require('./helpers/discount');
 const { createCsvToJson } = require('./helpers/createCsvToJson');
+const uploadCsv = require('./helpers/uploadCsv');
 
 function createResponse(code, message) {
   return { code, message };
@@ -187,26 +188,45 @@ async function discountAsyncPOST(body) {
   return createResponse(code, message);
 }
 
+// ---------------------------- uploadDataCSV ----------------------------- //
+
+async function uploadDataCsv(req) {
+  try{
+    await uploadCsv(req);
+    return createResponse(httpCodes.ok, {
+      message: 'The json file was rewritten',
+    });
+  } catch (err) {
+    return createResponse(httpCodes.badRequest,
+      {'error':'Can not convert csv to JSON'});
+  }
+
+}
+
 // ---------------------------- uploadCSV ----------------------------- //
 
-async function uploadCSV(req) {
-  const promisifyPipeline = promisify(pipeline);
-  const fileName = Date.now();
-  const outputStream = fs.createWriteStream(
-    path.join(__dirname, `./upload/${fileName}.json`),
-  );
+// async function uploadCSV(req) {
+//   const promisifyPipeline = promisify(pipeline);
+//   const fileName = Date.now();
+//   const outputStream = fs.createWriteStream(
+//     path.join(__dirname, `./upload/${fileName}.json`),
+//   );
 
-  const csvToJson = createCsvToJson();
+//   const csvToJson = createCsvToJson();
 
-  try {
-    await promisifyPipeline(req, csvToJson, outputStream);
-  } catch (e) {
-    console.log('CSV pipeline is failed', e);
-  }
-  return createResponse(httpCodes.ok, {
-    message: 'The json file was created',
-  });
-}
+//   try {
+//     await promisifyPipeline(req, csvToJson, outputStream);
+//     return createResponse(httpCodes.ok, {
+//       message: 'The json file was created',
+//     });
+//   } catch (e) {
+//     console.log('CSV pipeline is failed', e);
+//     return createResponse(httpCodes.badReq, {
+//       message: 'CSV to JSON is failed',
+//     });
+//   }
+
+// }
 
 module.exports = {
   home,
@@ -225,5 +245,5 @@ module.exports = {
   promisifyPOST,
   discountAsyncGET,
   discountAsyncPOST,
-  uploadCSV,
+  uploadDataCsv,
 };

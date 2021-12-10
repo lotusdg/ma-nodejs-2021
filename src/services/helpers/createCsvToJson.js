@@ -48,16 +48,10 @@ function createCsvToJson() {
     } catch (e) {
       console.error(e);
     }
+
   };
 
-  const flush = () => {
-    console.log('No more data to read.');
-    // callback(null, '');
-  };
-
-  return new Transform({ transform, flush });
+  return new Transform({ transform });
 }
 
-module.exports = {
-  createCsvToJson,
-};
+module.exports = createCsvToJson;
