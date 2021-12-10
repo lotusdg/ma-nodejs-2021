@@ -114,9 +114,9 @@ async function discountAsyncPOST(req, res) {
 
 async function dataPUT(req, res) {
   try {
-    await services.uploadCSV(req);
-  }
-  catch (e) {
+    const { code, message } = await services.uploadCSV(req);
+    resFinish(res, code, message);
+  } catch (e) {
     console.error('Failed to upload CSV', e);
     resFinish(res, 500, { error: e.message });
   }

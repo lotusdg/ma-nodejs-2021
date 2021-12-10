@@ -19,7 +19,7 @@ const discount = require('./helpers/discount');
 const { createCsvToJson } = require('./helpers/createCsvToJson');
 
 function createResponse(code, message) {
-  return {code,  message};
+  return { code, message };
 }
 
 function home() {
@@ -53,7 +53,7 @@ function filter(params) {
 function postFilter(body, params) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, {error: err.error});
+    return createResponse(httpCodes.badReq, { error: err.error });
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
@@ -76,7 +76,7 @@ function topPrice() {
 function findTopPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, {error: err.error});
+    return createResponse(httpCodes.badReq, { error: err.error });
   }
   const result = findTopPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -94,7 +94,7 @@ function commonPriceGET() {
 function commonPricePost(body) {
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, {error: err.error});
+    return createResponse(httpCodes.badReq, { error: err.error });
   }
   const result = addPrice(validArray);
   return createResponse(httpCodes.ok, result);
@@ -105,15 +105,16 @@ function commonPricePost(body) {
 function dataPost(body) {
   const { err } = validationAndParse(body);
   if (err != null) {
-    return createResponse(httpCodes.badReq, {error: err.error});
+    return createResponse(httpCodes.badReq, { error: err.error });
   }
   try {
     fs.writeFileSync(path.join(__dirname, '../data.json'), body);
   } catch (e) {
-    return createResponse(httpCodes.badReq, {error: e.message});
+    return createResponse(httpCodes.badReq, { error: e.message });
   }
-  return createResponse(httpCodes.ok,
-    { message: 'The json file was rewritten' });
+  return createResponse(httpCodes.ok, {
+    message: 'The json file was rewritten',
+  });
 }
 
 // ---------------------------- promiseGET ----------------------------- //
@@ -146,7 +147,7 @@ function promisifyGET() {
   const discountPromisify = util.promisify(discount);
   return new Promise((resolve) => {
     discountPromisify()
-      .then(value => {
+      .then((value) => {
         const fruitsWithDiscount = addDiscountPrice(value, data);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
@@ -164,7 +165,7 @@ function promisifyPOST(body) {
       return reject(new Error(`${err.error}`));
     }
     discountPromisify()
-      .then(value => {
+      .then((value) => {
         const fruitsWithDiscount = addDiscountPrice(value, validArray);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
@@ -182,8 +183,8 @@ async function discountAsyncGET() {
 // ---------------------------- AsyncPOST ----------------------------- //
 
 async function discountAsyncPOST(body) {
-    const { code, message } = await promisePOST(body);
-    return createResponse(code, message);
+  const { code, message } = await promisePOST(body);
+  return createResponse(code, message);
 }
 
 // ---------------------------- uploadCSV ----------------------------- //
@@ -191,18 +192,20 @@ async function discountAsyncPOST(body) {
 async function uploadCSV(req) {
   const promisifyPipeline = promisify(pipeline);
   const fileName = Date.now();
-  // const filePath = `./upload/${fileName}.json`;
-  const outputStream =
-    fs.createWriteStream(path.join(__dirname, `./upload/${fileName}.json`));
+  const outputStream = fs.createWriteStream(
+    path.join(__dirname, `./upload/${fileName}.json`),
+  );
 
   const csvToJson = createCsvToJson();
 
   try {
     await promisifyPipeline(req, csvToJson, outputStream);
+  } catch (e) {
+    console.log('CSV pipeline is failed', e);
   }
-  catch (e) {
-    console.log('CSV pipeline is failed',e);
-  }
+  return createResponse(httpCodes.ok, {
+    message: 'The json file was created',
+  });
 }
 
 module.exports = {
@@ -222,5 +225,5 @@ module.exports = {
   promisifyPOST,
   discountAsyncGET,
   discountAsyncPOST,
-  uploadCSV
+  uploadCSV,
 };
