@@ -16,7 +16,6 @@ const {
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
-const { createCsvToJson } = require('./helpers/createCsvToJson');
 const uploadCsv = require('./helpers/uploadCsv');
 
 function createResponse(code, message) {
@@ -192,15 +191,12 @@ async function discountAsyncPOST(body) {
 
 async function uploadDataCsv(req) {
   try{
-    await uploadCsv(req);
-    return createResponse(httpCodes.ok, {
-      message: 'The json file was rewritten',
-    });
+    const {code, message} = await uploadCsv(req);
+    return createResponse(code, {message});
   } catch (err) {
     return createResponse(httpCodes.badRequest,
       {'error':'Can not convert csv to JSON'});
   }
-
 }
 
 // ---------------------------- uploadCSV ----------------------------- //
