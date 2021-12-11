@@ -7,6 +7,7 @@ function createCsvToJsonOld() {
   let isFirstChunk = true;
   let headers;
   let lastLine;
+  const result = [];
 
   const transform = (chunk, encoding, callback) => {
     if (isFirstChunk) {
@@ -18,11 +19,9 @@ function createCsvToJsonOld() {
 
       const chunkInJson = chunkToJson(strChunk, arrayChunk, headers);
 
-      const chunkWithoutDoubles = deleteDoubles(chunkInJson);
+      result.push(chunkInJson);
 
-      const chunkInHelpersFormat = createCorrectObj(chunkWithoutDoubles);
-
-      callback(null, JSON.stringify(chunkInHelpersFormat));
+      callback(null, '');
       return;
     }
 
@@ -33,14 +32,21 @@ function createCsvToJsonOld() {
 
   const chunkInJson = chunkToJson(strChunk, arrayChunk, headers);
 
-  const chunkWithoutDoubles = deleteDoubles(chunkInJson);
+  result.push(chunkInJson);
 
-  const chunkInHelpersFormat = createCorrectObj(chunkWithoutDoubles);
-
-  callback(null, JSON.stringify(chunkInHelpersFormat));
+  callback(null, '');
 
   };
-  return new Transform({ transform });
+
+  const flush = callback => {
+    console.log('No more data to read!');
+    const newArray = result.flat();
+    const chunkWithoutDoubles = deleteDoubles(newArray);
+    const chunkInHelpersFormat = createCorrectObj(chunkWithoutDoubles);
+    callback(null, JSON.stringify(chunkInHelpersFormat));
+  };
+
+  return new Transform({ transform, flush });
 }
 
 module.exports = createCsvToJsonOld;
