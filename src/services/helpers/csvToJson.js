@@ -39,16 +39,12 @@ function createCsvToJsonOld() {
   };
 
   const flush = callback => {
-    console.log('No more data to read!');
+    console.log('No more data to read! Converting file...');
     const newArray = result.flat();
     const chunkWithoutDoubles = deleteDoubles(newArray);
     const chunkInHelpersFormat = createCorrectObj(chunkWithoutDoubles);
-    try {
-      callback(null, JSON.stringify(chunkInHelpersFormat));
-    }
-    catch (e) {
-      console.error('failed to exec steam', e);
-    }
+
+    callback(null, JSON.stringify(chunkInHelpersFormat));
   };
 
   return new Transform({ transform, flush });

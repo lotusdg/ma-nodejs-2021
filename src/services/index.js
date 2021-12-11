@@ -1,9 +1,22 @@
 const fs = require('fs');
+
 const path = require('path');
+
 const util = require('util');
-const { pipeline } = require('stream');
-const { promisify } = require('util');
-const data = require('../data.json');
+
+function getLastFile(myPath) {
+  const array = fs.readdirSync(myPath);
+  return array[array.length - 1];
+}
+
+const uploadFolder = path.join(__dirname, './helpers/upload');
+
+const lastFile = getLastFile(uploadFolder);
+
+const myPath = uploadFolder.concat(`/${lastFile}`);
+
+// eslint-disable-next-line import/no-dynamic-require
+const data = require(`${myPath}`);
 
 const {
   helper1: filterByItem,
@@ -198,31 +211,6 @@ async function uploadDataCsv(req) {
       {'error':'Can not convert csv to JSON'});
   }
 }
-
-// ---------------------------- uploadCSV ----------------------------- //
-
-// async function uploadCSV(req) {
-//   const promisifyPipeline = promisify(pipeline);
-//   const fileName = Date.now();
-//   const outputStream = fs.createWriteStream(
-//     path.join(__dirname, `./upload/${fileName}.json`),
-//   );
-
-//   const csvToJson = createCsvToJson();
-
-//   try {
-//     await promisifyPipeline(req, csvToJson, outputStream);
-//     return createResponse(httpCodes.ok, {
-//       message: 'The json file was created',
-//     });
-//   } catch (e) {
-//     console.log('CSV pipeline is failed', e);
-//     return createResponse(httpCodes.badReq, {
-//       message: 'CSV to JSON is failed',
-//     });
-//   }
-
-// }
 
 module.exports = {
   home,
