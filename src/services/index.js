@@ -4,20 +4,6 @@ const path = require('path');
 
 const util = require('util');
 
-function getLastFile(myPath) {
-  const array = fs.readdirSync(myPath);
-  return array[array.length - 1];
-}
-
-const uploadFolder = path.join(__dirname, './helpers/upload');
-
-const lastFile = getLastFile(uploadFolder);
-
-const myPath = uploadFolder.concat(`/${lastFile}`);
-
-// eslint-disable-next-line import/no-dynamic-require
-const data = require(`${myPath}`);
-
 const {
   helper1: filterByItem,
   helper3: addPrice,
@@ -26,6 +12,7 @@ const {
   addDiscountPrice,
   validationAndParse,
   addDiscountPromise,
+  data,
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
@@ -203,12 +190,13 @@ async function discountAsyncPOST(body) {
 // ---------------------------- uploadDataCSV ----------------------------- //
 
 async function uploadDataCsv(req) {
-  try{
-    const {code, message} = await uploadCsv(req);
-    return createResponse(code, {message});
+  try {
+    const { code, message } = await uploadCsv(req);
+    return createResponse(code, { message });
   } catch (err) {
-    return createResponse(httpCodes.badRequest,
-      {'error':'Can not convert csv to JSON'});
+    return createResponse(httpCodes.badRequest, {
+      error: 'Can not convert csv to JSON',
+    });
   }
 }
 

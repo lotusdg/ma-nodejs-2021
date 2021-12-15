@@ -9,20 +9,17 @@ const createCsvToJsonOld = require('./csvToJson');
 
 async function uploadCsv(inputStream) {
   const fileName = Date.now();
-  const filePath = path.join(__dirname, `./upload/${fileName}.json`);
-  const outputStream = fs.createWriteStream(
-    filePath,
-  );
+  const filePath = path.join(__dirname, `../../../upload/${fileName}.json`);
+  const outputStream = fs.createWriteStream(filePath);
 
-  const csvToJson =
-    createCsvToJsonOld( filePath );
+  const csvToJson = createCsvToJsonOld(filePath);
 
   try {
     await promisifiedPipeline(inputStream, csvToJson, outputStream);
-    return { code: 200, message: `file ${fileName}.json was upload`};
+    return { code: 200, message: `file ${fileName}.json was upload` };
   } catch (err) {
     console.error('Csv pipeline failed', err);
-    return { code: 400, message: err};
+    return { code: 400, message: err };
   }
 }
 
