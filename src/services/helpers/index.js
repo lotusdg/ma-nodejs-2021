@@ -6,6 +6,7 @@ const { httpCodes } = require('./httpCodes');
 const { addDiscountPrice } = require('./addDiscountPrice');
 const { validationAndParse } = require('./validationAndParse');
 const { addDiscountPromise } = require('./addDiscountPromise');
+const { data } = require('./getData');
 
 module.exports = {
   helper1: filterByItem,
@@ -16,4 +17,5 @@ module.exports = {
   addDiscountPrice,
   validationAndParse,
   addDiscountPromise,
+  data,
 };

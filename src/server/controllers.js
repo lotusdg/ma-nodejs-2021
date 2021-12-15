@@ -51,54 +51,74 @@ function dataPost(req, res) {
 }
 
 function promiseGET(req, res) {
-  services.promiseGET().then(({code, message}) => {
-    resFinish(res, code, message);
-  }).catch(e => {
-    resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  services
+    .promiseGET()
+    .then(({ code, message }) => {
+      resFinish(res, code, message);
+    })
+    .catch((e) => {
+      resFinish(res, httpCodes.badReq, { error: e.message });
+    });
 }
 
 function promisePOST(req, res) {
-  services.promisePOST(req.body).then(({code, message}) => {
-    resFinish(res, code, message);
-  }).catch(e => {
-    resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  services
+    .promisePOST(req.body)
+    .then(({ code, message }) => {
+      resFinish(res, code, message);
+    })
+    .catch((e) => {
+      resFinish(res, httpCodes.badReq, { error: e.message });
+    });
 }
 
 function promisifyGET(req, res) {
-  services.promisifyGET().then(({code, message}) => {
-    resFinish(res, code, message);
-  }).catch(e => {
-    resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  services
+    .promisifyGET()
+    .then(({ code, message }) => {
+      resFinish(res, code, message);
+    })
+    .catch((e) => {
+      resFinish(res, httpCodes.badReq, { error: e.message });
+    });
 }
 
 function promisifyPOST(req, res) {
-  services.promisifyPOST(req.body).then(({code, message}) => {
-    resFinish(res, code, message);
-  }).catch(e => {
-    resFinish(res, httpCodes.badReq, {error: e.message});
-  });
+  services
+    .promisifyPOST(req.body)
+    .then(({ code, message }) => {
+      resFinish(res, code, message);
+    })
+    .catch((e) => {
+      resFinish(res, httpCodes.badReq, { error: e.message });
+    });
 }
 
 async function discountAsyncGET(req, res) {
   try {
-    const {code, message} = await services.discountAsyncGET();
+    const { code, message } = await services.discountAsyncGET();
     resFinish(res, code, message);
-  }
-  catch(e) {
-    resFinish(res, httpCodes.badReq, {error: e.message});
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
   }
 }
 
 async function discountAsyncPOST(req, res) {
   try {
-    const {code, message} = await services.discountAsyncPOST(req.body);
+    const { code, message } = await services.discountAsyncPOST(req.body);
     resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
   }
-  catch(e) {
-    resFinish(res, httpCodes.badReq, {error: e.message});
+}
+
+async function dataPUT(req, res) {
+  try {
+    const { code, message } = await services.uploadDataCsv(req);
+    resFinish(res, code, message);
+  } catch (e) {
+    console.error('Failed to upload CSV', e);
+    resFinish(res, 500, { error: e.message });
   }
 }
 
@@ -118,4 +138,5 @@ module.exports = {
   promisifyPOST,
   discountAsyncGET,
   discountAsyncPOST,
+  dataPUT,
 };
