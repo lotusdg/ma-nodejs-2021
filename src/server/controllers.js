@@ -3,9 +3,8 @@ const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
   res.setHeader('Content-Type', 'application/json');
-  res.statusCode = code;
-  res.write(JSON.stringify(message));
-  res.end();
+  res.status = code;
+  res.send(JSON.stringify(message));
 }
 
 function home(req, res) {
@@ -19,11 +18,11 @@ function notFound(req, res) {
 }
 
 function filter(req, res) {
-  const { message, code } = services.filter(req.params);
+  const { message, code } = services.filter(req.query);
   resFinish(res, code, message);
 }
 function postFilter(req, res) {
-  const { message, code } = services.postFilter(req.body, req.params);
+  const { message, code } = services.postFilter(req.body, req.query);
   resFinish(res, code, message);
 }
 

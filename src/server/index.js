@@ -1,9 +1,6 @@
-const express = require('express');
+const server = require('./routes/routes');
 
-// const requestHandler = require('./requestHandler');
 const { port } = require('../config');
-
-const server = express();
 
 let listener;
 
