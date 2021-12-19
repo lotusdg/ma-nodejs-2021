@@ -1,22 +1,12 @@
 const express = require('express');
 
 const server = express();
-
 const bodyParser = require('body-parser');
-
 const controllers = require('../controllers');
-
 const discount = require('./discount');
+const { authorization, errorHandler } = require('../middlewares');
 
-const myAuthorization = (req, res, next) => {
-  const myArray = req.headers.authorization.split(' ');
-  if (myArray[0] === 'Basic') {
-    const authStr = Buffer.from(myArray[1], 'base64').toString();
-  }
-  return res.send({ message: 'incorrect login/pass' });
-};
-
-server.use(myAuthorization);
+server.use(authorization);
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -49,5 +39,7 @@ server.put('/data', (req, res, next) => {
 });
 
 server.use('/discount', discount);
+
+server.use(errorHandler);
 
 module.exports = server;

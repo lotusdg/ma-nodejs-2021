@@ -1,12 +1,12 @@
 const server = require('./routes/routes');
 
-const { port } = require('../config');
+require('dotenv').config();
 
 let listener;
 
 function start() {
-  listener = server.listen(port, () => {
-    console.log(`Server successfully started on port ${port}`);
+  listener = server.listen(process.env.PORT, () => {
+    console.log(`Server successfully started on port ${process.env.PORT}`);
   });
 }
 
