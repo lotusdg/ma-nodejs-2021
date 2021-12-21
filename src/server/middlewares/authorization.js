@@ -1,29 +1,21 @@
-const { login, password } = require('../../config');
+const { loginEnv, passEnv } = require('../../config');
+const { httpCodes } = require('../../services/helpers/httpCodes');
 
 const authorizationMiddleware = (req, res, next) => {
-  if (req.headers.authorization !== undefined) {
-    try {
-      const myArray = req.headers.authorization.split(' ');
-      if (myArray[0] === 'Basic') {
-        const authStr = Buffer.from(myArray[1], 'base64').toString();
-        const authObj = JSON.parse(
-          authStr
-            .replace(/ /g, ' "')
-            .replace(/:/g, '":')
-            .replace(',', '",')
-            .replace('}', '"}'),
-        );
-        if (authObj.username === login && authObj.password === password)
-          return next();
-        return res.status(401).send({ message: 'Incorrect login/password' });
-      }
-    } catch (e) {
-      return res
-        .status(401)
-        .send({ message: `Error validation login/pass, ${e}` });
-    }
+  const typeAuth = 'Basic';
+  if (!req.headers.authorization) {
+    return res
+      .status(httpCodes.unauthorized)
+      .send({ error: 'Authorization header is absent' });
   }
-  res.json({ user: 'guest' });
+
+  const [type, token] = req.headers.authorization.split(' ');
+  const [login, pass] = Buffer.from(token, 'base64').toString().split(':');
+
+  if (type !== typeAuth || login !== loginEnv || pass !== passEnv) {
+    return res.status(httpCodes.unauthorized).send({ error: 'Non authorized' });
+  }
+  next();
 };
 
 module.exports = { authorizationMiddleware };

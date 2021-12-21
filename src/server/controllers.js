@@ -2,7 +2,6 @@ const services = require('../services');
 const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
-  res.setHeader('Content-Type', 'application/json');
   res.status(code).json(message);
 }
 

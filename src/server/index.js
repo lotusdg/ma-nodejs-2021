@@ -1,11 +1,11 @@
-const { port } = require('../config');
+const { portEnv } = require('../config');
 const server = require('./routes/routes');
 
 let listener;
 
 function start() {
-  listener = server.listen(port, () => {
-    console.log(`Server successfully started on port ${port}`);
+  listener = server.listen(portEnv, () => {
+    console.log(`Server successfully started on port ${portEnv}`);
   });
 }
 

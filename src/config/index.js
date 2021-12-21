@@ -1,9 +1,9 @@
 require('dotenv').config();
 
 const config = {
-  port: process.env.PORT || 3000,
-  login: process.env.login,
-  password: process.env.PASSWORD,
+  portEnv: process.env.PORT || 3000,
+  loginEnv: process.env.LOGIN,
+  passEnv: process.env.PASSWORD,
 };
 
 module.exports = config;
