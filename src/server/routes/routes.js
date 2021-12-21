@@ -11,11 +11,11 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
 server.use(authorization);
-server.use(errorHandler);
 server.use('/discount', discount);
 server.use(common);
 server.use((req, res) =>
   res.status(httpCodes.notFound).send({ error: `Page not found ${req.path}` }),
 );
+server.use(errorHandler);
 
 module.exports = server;
