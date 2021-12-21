@@ -7,39 +7,27 @@ const discount = require('./discount');
 const { authorization, errorHandler } = require('../middlewares');
 
 server.use(authorization);
+server.use(errorHandler);
+server.use('/discount', discount);
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
-server.get('/', (req, res) => {
-  controllers.home(req, res);
-});
+server.get('/', controllers.home);
 
-server.get('/filter', (req, res) => controllers.filter(req, res));
-server.post('/filter', (req, res) => controllers.postFilter(req, res));
+server.get('/filter', controllers.filter);
+server.post('/filter', controllers.postFilter);
 
-server.get('/topprice', (req, res) => controllers.topPrice(req, res));
-server.post('/topprice', (req, res) => controllers.findTopPricePost(req, res));
+server.get('/topprice', controllers.topPrice);
+server.post('/topprice', controllers.findTopPricePost);
 
-server.get('/commonprice', (req, res) => controllers.commonPriceGET(req, res));
-server.post('/commonprice', (req, res) =>
-  controllers.commonPricePost(req, res),
-);
+server.get('/commonprice', controllers.commonPriceGET);
+server.post('/commonprice', controllers.commonPricePost);
 
-server.post('/data', (req, res) => {
-  controllers.dataPost(req, res);
-});
+server.post('/data', controllers.dataPost);
 
 server.put('/data', (req, res, next) => {
-  if (req.headers['content-type'] === 'text/csv') {
-    controllers.dataPUT(req, res);
-  } else {
-    next(new Error('wrong header'));
-  }
+  controllers.dataPUT(req, res, next);
 });
-
-server.use('/discount', discount);
-
-server.use(errorHandler);
 
 module.exports = server;

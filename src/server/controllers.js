@@ -3,8 +3,7 @@ const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
   res.setHeader('Content-Type', 'application/json');
-  res.status = code;
-  res.send(JSON.stringify(message));
+  res.status(code).json(message);
 }
 
 function home(req, res) {
@@ -111,14 +110,16 @@ async function discountAsyncPOST(req, res) {
   }
 }
 
-async function dataPUT(req, res) {
-  try {
-    const { code, message } = await services.uploadDataCsv(req);
-    resFinish(res, code, message);
-  } catch (e) {
-    console.error('Failed to upload CSV', e);
-    resFinish(res, 500, { error: e.message });
-  }
+async function dataPUT(req, res, next) {
+  if (req.headers['content-type'] === 'text/csv') {
+    try {
+      const { code, message } = await services.uploadDataCsv(req);
+      resFinish(res, code, message);
+    } catch (e) {
+      console.error('Failed to upload CSV', e);
+      resFinish(res, 500, { error: e.message });
+    }
+  } else next(new Error('wrong header'));
 }
 
 module.exports = {

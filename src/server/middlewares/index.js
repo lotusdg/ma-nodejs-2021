@@ -1,4 +1,4 @@
-const { myAuthorization } = require('./authorization');
+const { authorizationMiddleware } = require('./authorization');
 const { errorHandler } = require('./errorHandler');
 
-module.exports = { authorization: myAuthorization, errorHandler };
+module.exports = { authorization: authorizationMiddleware, errorHandler };
