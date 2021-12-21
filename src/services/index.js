@@ -33,13 +33,13 @@ function notFound() {
 // ---------------------------- filterGET --------------------------------- //
 
 function filter(params) {
-  if (params.toString() === '') {
+  if (!Object.keys(params).length) {
     return createResponse(httpCodes.ok, data);
   }
   let result = data;
   // eslint-disable-next-line no-restricted-syntax
-  for (const key of params.keys()) {
-    const element = params.get(key);
+  for (const key of Object.keys(params)) {
+    const element = params[key];
     result = filterByItem(result, key, element);
   }
   if (result.length > 0) {
@@ -51,14 +51,16 @@ function filter(params) {
 // ------------------------ filterPost ------------------------------- //
 
 function postFilter(body, params) {
+  if (!body.length)
+    return createResponse(httpCodes.badReq, { message: 'data not found' });
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
     return createResponse(httpCodes.badReq, { error: err.error });
   }
   let result = validArray;
   // eslint-disable-next-line no-restricted-syntax
-  for (const key of params.keys()) {
-    const element = params.get(key);
+  for (const key of Object.keys(params)) {
+    const element = params[key];
     result = filterByItem(result, key, element);
   }
   return createResponse(httpCodes.ok, result);
@@ -74,6 +76,8 @@ function topPrice() {
 // ------------------------- findTopPricePost ------------------------------- //
 
 function findTopPricePost(body) {
+  if (!body.length)
+    return createResponse(httpCodes.badReq, { message: 'data not found' });
   const { err, validArray } = validationAndParse(body);
   if (err != null) {
     return createResponse(httpCodes.badReq, { error: err.error });
@@ -108,7 +112,10 @@ function dataPost(body) {
     return createResponse(httpCodes.badReq, { error: err.error });
   }
   try {
-    fs.writeFileSync(path.join(__dirname, '../data.json'), body);
+    fs.writeFileSync(
+      path.join(__dirname, '../data.json'),
+      JSON.stringify(body),
+    );
   } catch (e) {
     return createResponse(httpCodes.badReq, { error: e.message });
   }
@@ -131,6 +138,7 @@ function promiseGET() {
 
 function promisePOST(body) {
   return new Promise((resolve, reject) => {
+    if (!body.length) return reject(new Error('data not found'));
     const { err, validArray } = validationAndParse(body);
     if (err != null) {
       return reject(new Error(`${err.error}`));
