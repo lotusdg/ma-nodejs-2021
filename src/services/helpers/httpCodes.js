@@ -3,6 +3,7 @@ const httpCodes = {
   badReq: 400,
   notFound: 404,
   unauthorized: 401,
+  serverError: 500,
 };
 
 module.exports = { httpCodes };
