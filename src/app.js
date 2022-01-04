@@ -1,4 +1,6 @@
+const { db: dbConfig } = require('./config');
 const server = require('./server');
+const db = require('./db')(dbConfig);
 
 function enableGracefulExit() {
   const exitHandler = (error) => {
@@ -18,8 +20,10 @@ function enableGracefulExit() {
 }
 
 function boot() {
-  enableGracefulExit();
-  server.start();
+  const t = db.testConnection();
+  console.log(t);
+  // enableGracefulExit();
+  // server.start();
 }
 
 boot();
