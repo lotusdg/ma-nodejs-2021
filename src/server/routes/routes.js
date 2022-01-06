@@ -2,11 +2,11 @@ const express = require('express');
 
 const server = express();
 const bodyParser = require('body-parser');
+const task = require('./task');
 const discount = require('./discount');
 const common = require('./common');
 const { authorization, errorHandler } = require('../middlewares');
 const { httpCodes } = require('../../services/helpers');
-const task = require('./task');
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));

@@ -1,6 +1,4 @@
-// const { db: dbConfig } = require('./config');
 const server = require('./server');
-// const db = require('./db')(dbConfig);
 
 function enableGracefulExit() {
   const exitHandler = (error) => {
@@ -22,16 +20,6 @@ function enableGracefulExit() {
 function boot() {
   enableGracefulExit();
   server.start();
-  // const updateProduct = await db.updateProduct({
-  //   id: 3,
-  //   item: 'test',
-  //   type: 'Mini test',
-  //   measure: 'test',
-  //   measureValue: 46,
-  //   priceType: 'test',
-  //   priceValue: '$8',
-  // });
-  // console.log(await db.deleteProduct(3));
 }
 
 boot();
