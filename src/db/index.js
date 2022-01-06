@@ -7,7 +7,7 @@ module.exports = (config) => {
       try {
         console.log('hello from pg test connection');
         const timeFromDb = await client.query('SELECT NOW()');
-        console.log(timeFromDb.rows[0]);
+        return timeFromDb.rows[0];
       } catch (err) {
         console.error(err.message || err);
         throw err;
@@ -51,7 +51,11 @@ module.exports = (config) => {
           ],
         );
 
-        return `DEBUG: New product created: ${JSON.stringify(result.rows[0])}`;
+        return {
+          message: `DEBUG: New product created: ${JSON.stringify(
+            result.rows[0],
+          )}`,
+        };
       } catch (err) {
         console.error(err.message || err);
         throw err;
@@ -68,6 +72,62 @@ module.exports = (config) => {
           [id],
         );
         return result.rows[0];
+      } catch (err) {
+        console.error(err.message || err);
+        throw err;
+      }
+    },
+
+    updateProduct: async ({ id, ...product }) => {
+      try {
+        if (!id) {
+          throw new Error('ERROR: Product is not defined');
+        }
+
+        const query = [];
+        const values = [];
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [i, [k, v]] of Object.entries(product).entries()) {
+          query.push(`${k} = $${i + 1}`);
+          values.push(v);
+        }
+
+        if (!values.length) {
+          throw new Error('Error: Nothing to update');
+        }
+        values.push(new Date());
+        values.push(id);
+
+        const result = await client.query(
+          `UPDATE products SET ${query.join(',')}, datelastchange = $${
+            values.length - 1
+          } WHERE id = $${values.length} RETURNING *`,
+          values,
+        );
+
+        return {
+          message: `DEBUG: Product updated ${JSON.stringify(result.rows[0])}`,
+        };
+      } catch (err) {
+        console.error(err.message || err);
+        throw err;
+      }
+    },
+
+    deleteProduct: async (id) => {
+      try {
+        if (!id) {
+          throw new Error('ERROR: Product is not defined');
+        }
+
+        const timestamp = new Date();
+
+        await client.query(
+          'UPDATE products SET deletedate = $1 WHERE id = $2',
+          [timestamp, id],
+        );
+        return { message: 'Product was deleted' };
       } catch (err) {
         console.error(err.message || err);
         throw err;

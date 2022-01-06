@@ -121,6 +121,51 @@ async function dataPUT(req, res, next) {
   } else next(new Error('wrong header'));
 }
 
+async function test(req, res) {
+  try {
+    const { code, message } = await services.test();
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function productCreatePost(req, res) {
+  try {
+    const { code, message } = await services.createProductPost(req);
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function productGet(req, res) {
+  try {
+    const { code, message } = await services.productGet(req.query);
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function productUpdatePut(req, res) {
+  try {
+    const { code, message } = await services.updateProductPut(req);
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function productDeleteMethodGet(req, res) {
+  try {
+    const { code, message } = await services.productDelete(req.query);
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
 module.exports = {
   home,
   notFound,
@@ -138,4 +183,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   dataPUT,
+  test,
+  productCreatePost,
+  productGet,
+  productUpdatePut,
+  productDeleteMethodGet,
 };
