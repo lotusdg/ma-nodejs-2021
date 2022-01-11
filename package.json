@@ -23,6 +23,7 @@
     "express": "^4.17.2",
     "express-basic-auth": "^1.2.1",
     "lodash.isequal": "^4.5.0",
-    "lodash.omit": "^4.5.0"
+    "lodash.omit": "^4.5.0",
+    "pg": "^8.7.1"
   }
 }
