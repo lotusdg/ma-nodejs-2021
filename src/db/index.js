@@ -121,7 +121,7 @@ module.exports = (config) => {
     deleteProduct: async (id) => {
       try {
         if (!id) {
-          throw new Error('ERROR: Product is not defined');
+          throw new Error('ERROR: Products id is not defined');
         }
 
         const timestamp = new Date();
