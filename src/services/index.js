@@ -211,7 +211,7 @@ async function uploadDataCsv(req) {
   }
 }
 
-async function test() {
+async function testDBConnection() {
   try {
     const message = await db.testConnection();
     return createResponse(httpCodes.ok, message);
@@ -222,7 +222,7 @@ async function test() {
   }
 }
 
-async function createProductPost(req) {
+async function createProduct(req) {
   try {
     const product = req.body;
     const message = await db.createProduct({
@@ -241,7 +241,7 @@ async function createProductPost(req) {
   }
 }
 
-async function productGet(params) {
+async function getProductById(params) {
   try {
     const message = await db.getProduct(params.id);
     return createResponse(httpCodes.ok, message);
@@ -278,7 +278,7 @@ async function updateProductPut(req) {
   }
 }
 
-async function productDelete(params) {
+async function deleteProduct(params) {
   try {
     const message = await db.deleteProduct(params.id);
     return createResponse(httpCodes.ok, message);
@@ -307,9 +307,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   uploadDataCsv,
-  test,
-  createProductPost,
-  productGet,
+  testDBConnection,
+  createProduct,
+  getProductById,
   updateProductPut,
-  productDelete,
+  deleteProduct,
 };

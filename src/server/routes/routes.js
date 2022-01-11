@@ -2,7 +2,7 @@ const express = require('express');
 
 const server = express();
 const bodyParser = require('body-parser');
-const task = require('./task');
+const product = require('./product');
 const discount = require('./discount');
 const common = require('./common');
 const { authorization, errorHandler } = require('../middlewares');
@@ -12,7 +12,7 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
 server.use(authorization);
-server.use('/task', task);
+server.use('/product', product);
 server.use('/discount', discount);
 server.use(common);
 server.use((req, res) =>

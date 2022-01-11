@@ -65,12 +65,15 @@ module.exports = (config) => {
     getProduct: async (id) => {
       try {
         if (!id) {
-          throw new Error('ERROR: Product is not defined');
+          throw new Error('ERROR: Products id is not defined');
         }
         const result = await client.query(
           'SELECT * FROM Products p WHERE p.id = $1 AND p.deletedate IS NULL',
           [id],
         );
+        if (!result.rows[0]) {
+          return { message: 'no requested items' };
+        }
         return result.rows[0];
       } catch (err) {
         console.error(err.message || err);
