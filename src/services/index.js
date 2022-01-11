@@ -4,9 +4,6 @@ const path = require('path');
 
 const util = require('util');
 
-const { db: dbConfig } = require('../config');
-const db = require('../db')(dbConfig);
-
 const {
   helper1: filterByItem,
   helper3: addPrice,
@@ -20,8 +17,13 @@ const {
 
 const discount = require('./helpers/discount');
 const uploadCsv = require('./helpers/uploadCsv');
-const sequelize = require('../db');
-const Product = require('../db');
+const {
+  getProductDb,
+  createProductDb,
+  updateProductDb,
+  getProductAllDb,
+  deleteProductDb,
+} = require('../db');
 
 function createResponse(code, message) {
   return { code, message };
@@ -213,31 +215,10 @@ async function uploadDataCsv(req) {
   }
 }
 
-async function testDBConnection() {
-  try {
-    await sequelize.authenticate();
-    return createResponse(httpCodes.ok, {
-      message: 'Соединение с БД было успешно установлено',
-    });
-  } catch (e) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Невозможно выполнить подключение к БД: ',
-      e,
-    });
-  }
-}
-
 async function createProduct(req) {
   try {
     const product = req.body;
-    const message = await Product.create({
-      item: product.item,
-      type: product.type,
-      measure: product.measure,
-      measureValue: product.measureValue,
-      priceType: product.priceType,
-      priceValue: product.priceValue,
-    }); // INSERT INTO products ...
+    const message = await createProductDb(product);
     return createResponse(httpCodes.ok, { message });
   } catch (err) {
     return createResponse(httpCodes.badRequest, {
@@ -246,13 +227,20 @@ async function createProduct(req) {
   }
 }
 
-async function getProductById(params) {
+async function getProductByUuid(params) {
   try {
-    const message = await Product.findAll({
-      where: {
-        uuid: params.uuid,
-      },
-    }); // SELECT * FROM post WHERE authorId = uuid;
+    const message = await getProductDb(params.uuid);
+    return createResponse(httpCodes.ok, { message });
+  } catch (err) {
+    return createResponse(httpCodes.badRequest, {
+      error: err.message || err,
+    });
+  }
+}
+
+async function getAllProducts() {
+  try {
+    const message = await getProductAllDb();
     return createResponse(httpCodes.ok, { message });
   } catch (err) {
     return createResponse(httpCodes.badRequest, {
@@ -265,6 +253,7 @@ async function updateProductPut(req) {
   try {
     const product = req.body;
     const productFields = {
+      uuid: product.uuid,
       item: product.item,
       type: product.type,
       measure: product.measure,
@@ -277,11 +266,7 @@ async function updateProductPut(req) {
         delete productFields[key];
       }
     });
-    const message = await Product.update(productFields, {
-      where: {
-        uuid: product.uuid,
-      },
-    }); // UPDATE products SET ... WHERE uuid = product.uuid;
+    const message = await updateProductDb(productFields);
     return createResponse(httpCodes.ok, { message });
   } catch (err) {
     return createResponse(httpCodes.badRequest, {
@@ -292,15 +277,8 @@ async function updateProductPut(req) {
 
 async function deleteProduct(params) {
   try {
-    const message = await Product.update(
-      { deleteDate: new Date() },
-      {
-        where: {
-          uuid: params.uuid,
-        },
-      },
-    ); // UPDATE products SET deleteDate = now() WHERE uuid = product.uuid;
-    return createResponse(httpCodes.ok, { message });
+    await deleteProductDb(params.uuid);
+    return createResponse(httpCodes.ok);
   } catch (err) {
     return createResponse(httpCodes.badRequest, {
       error: err.message || err,
@@ -326,9 +304,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   uploadDataCsv,
-  testDBConnection,
   createProduct,
-  getProductById,
+  getProductByUuid,
   updateProductPut,
   deleteProduct,
+  getAllProducts,
 };

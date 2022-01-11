@@ -1,13 +1,10 @@
 const server = require('./server');
-const { db: dbConfig } = require('./config');
-const db = require('./db')(dbConfig);
 
 function enableGracefulExit() {
   const exitHandler = (error) => {
     if (error) console.error(error);
     console.log('Gracefully stopping...');
     server.stop(() => {
-      db.close();
       process.exit();
     });
   };

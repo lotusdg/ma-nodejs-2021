@@ -121,15 +121,6 @@ async function dataPUT(req, res, next) {
   } else next(new Error('wrong header'));
 }
 
-async function testDBConnection(req, res) {
-  try {
-    const { code, message } = await services.testDBConnection();
-    resFinish(res, code, message);
-  } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
-  }
-}
-
 async function createProduct(req, res) {
   try {
     const { code, message } = await services.createProduct(req);
@@ -139,9 +130,9 @@ async function createProduct(req, res) {
   }
 }
 
-async function getProductById(req, res) {
+async function getProductByUuid(req, res) {
   try {
-    const { code, message } = await services.getProductById(req.query);
+    const { code, message } = await services.getProductByUuid(req.query);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
@@ -159,10 +150,19 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const { code, message } = await services.deleteProduct(req.query);
-    resFinish(res, code, message);
+    const { code } = await services.deleteProduct(req.query);
+    resFinish(res, code);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function getAllProducts(req, res) {
+  try {
+    const { code, message } = await services.getAllProducts();
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
@@ -183,9 +183,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   dataPUT,
-  testDBConnection,
   createProduct,
-  getProductById,
+  getProductByUuid,
   updateProduct,
   deleteProduct,
+  getAllProducts,
 };
