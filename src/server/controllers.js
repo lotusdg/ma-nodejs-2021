@@ -121,34 +121,34 @@ async function dataPUT(req, res, next) {
   } else next(new Error('wrong header'));
 }
 
-async function test(req, res) {
+async function testDBConnection(req, res) {
   try {
-    const { code, message } = await services.test();
+    const { code, message } = await services.testDBConnection();
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
   }
 }
 
-async function productCreatePost(req, res) {
+async function createProduct(req, res) {
   try {
-    const { code, message } = await services.createProductPost(req);
+    const { code, message } = await services.createProduct(req);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
   }
 }
 
-async function productGet(req, res) {
+async function getProductById(req, res) {
   try {
-    const { code, message } = await services.productGet(req.query);
+    const { code, message } = await services.getProductById(req.query);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
   }
 }
 
-async function productUpdatePut(req, res) {
+async function updateProduct(req, res) {
   try {
     const { code, message } = await services.updateProductPut(req);
     resFinish(res, code, message);
@@ -157,9 +157,9 @@ async function productUpdatePut(req, res) {
   }
 }
 
-async function productDeleteMethodGet(req, res) {
+async function deleteProduct(req, res) {
   try {
-    const { code, message } = await services.productDelete(req.query);
+    const { code, message } = await services.deleteProduct(req.query);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
@@ -183,9 +183,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   dataPUT,
-  test,
-  productCreatePost,
-  productGet,
-  productUpdatePut,
-  productDeleteMethodGet,
+  testDBConnection,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
 };

@@ -15,4 +15,3 @@ for DB:
 	"updatedAt" timestamptz NOT NULL,
 	CONSTRAINT products_pkey PRIMARY KEY (uuid)
 ); -->
-

@@ -4,6 +4,9 @@ const path = require('path');
 
 const util = require('util');
 
+const { db: dbConfig } = require('../config');
+const db = require('../db')(dbConfig);
+
 const {
   helper1: filterByItem,
   helper3: addPrice,
@@ -210,7 +213,7 @@ async function uploadDataCsv(req) {
   }
 }
 
-async function test() {
+async function testDBConnection() {
   try {
     await sequelize.authenticate();
     return createResponse(httpCodes.ok, {
@@ -224,7 +227,7 @@ async function test() {
   }
 }
 
-async function createProductPost(req) {
+async function createProduct(req) {
   try {
     const product = req.body;
     const message = await Product.create({
@@ -243,7 +246,7 @@ async function createProductPost(req) {
   }
 }
 
-async function productGet(params) {
+async function getProductById(params) {
   try {
     const message = await Product.findAll({
       where: {
@@ -287,7 +290,7 @@ async function updateProductPut(req) {
   }
 }
 
-async function productDelete(params) {
+async function deleteProduct(params) {
   try {
     const message = await Product.update(
       { deleteDate: new Date() },
@@ -323,9 +326,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   uploadDataCsv,
-  test,
-  createProductPost,
-  productGet,
+  testDBConnection,
+  createProduct,
+  getProductById,
   updateProductPut,
-  productDelete,
+  deleteProduct,
 };
