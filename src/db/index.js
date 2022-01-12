@@ -164,4 +164,6 @@ module.exports = {
       throw err;
     }
   },
+
+  Product,
 };
