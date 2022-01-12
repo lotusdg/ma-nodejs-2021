@@ -1,6 +1,6 @@
 const { Transform } = require('stream');
+const { createProductDb } = require('../../db');
 const { chunkToJson } = require('./chunkToJson');
-const { createCorrectObj } = require('./createCorrectObj');
 const { deleteDoubles } = require('./deleteDoubles');
 
 function createCsvToJsonOld() {
@@ -21,30 +21,31 @@ function createCsvToJsonOld() {
 
       result.push(chunkInJson);
 
-      callback(null, '');
+      callback(null);
       return;
     }
 
-  const strChunk = chunk.toString();
-  const chunkWithLastLine = lastLine.concat(strChunk);
-  const arrayChunk = chunkWithLastLine.split('\n');
-  lastLine = arrayChunk[arrayChunk.length - 1];
+    const strChunk = chunk.toString();
+    const chunkWithLastLine = lastLine.concat(strChunk);
+    const arrayChunk = chunkWithLastLine.split('\n');
+    lastLine = arrayChunk[arrayChunk.length - 1];
 
-  const chunkInJson = chunkToJson(strChunk, arrayChunk, headers);
+    const chunkInJson = chunkToJson(strChunk, arrayChunk, headers);
 
-  result.push(chunkInJson);
+    result.push(chunkInJson);
 
-  callback(null, '');
-
+    callback(null);
   };
 
-  const flush = callback => {
+  const flush = (callback) => {
     console.log('No more data to read! Converting file...');
     const newArray = result.flat();
     const chunkWithoutDoubles = deleteDoubles(newArray);
-    const chunkInHelpersFormat = createCorrectObj(chunkWithoutDoubles);
-
-    callback(null, JSON.stringify(chunkInHelpersFormat));
+    // eslint-disable-next-line no-restricted-syntax
+    chunkWithoutDoubles.forEach((obj) => {
+      createProductDb(obj);
+    });
+    callback(null);
   };
 
   return new Transform({ transform, flush });
