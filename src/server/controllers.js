@@ -142,7 +142,7 @@ async function getProductByUuid(req, res) {
 
 async function updateProduct(req, res) {
   try {
-    const { code, message } = await services.updateProductPut(req);
+    const { code, message } = await services.updateProduct(req);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });

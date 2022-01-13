@@ -211,7 +211,7 @@ async function uploadDataCsv(req) {
     const { code, message } = await uploadCsv(req);
     return createResponse(code, { message });
   } catch (err) {
-    return createResponse(httpCodes.badRequest, {
+    return createResponse(httpCodes.badReq, {
       error: 'Can not convert csv to JSON',
     });
   }
@@ -282,26 +282,37 @@ async function createProduct(req) {
 
     return createResponse(httpCodes.ok, { message });
   } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: err,
-    });
+    return createResponse(httpCodes.badReq, { error: err.message || err });
   }
 }
 
 async function getAllProducts() {
   try {
-    const message = await getProductAllDb();
-    return createResponse(httpCodes.ok, { message });
+    const result = await models.product.findAll({
+      where: {
+        deleteDate: null,
+      },
+      raw: true,
+      nest: true,
+    });
+
+    if (result.length === 0) {
+      return createResponse(httpCodes.ok, {
+        message: 'There is no items',
+      });
+    }
+
+    return createResponse(httpCodes.ok, { message: result });
   } catch (err) {
-    return createResponse(httpCodes.badRequest, {
+    return createResponse(httpCodes.badReq, {
       error: err.message || err,
     });
   }
 }
 
-async function updateProductPut(req) {
+async function updateProduct(req) {
+  const product = req.body;
   try {
-    const product = req.body;
     const productFields = {
       uuid: product.uuid,
       item: product.item,
@@ -316,21 +327,42 @@ async function updateProductPut(req) {
         delete productFields[key];
       }
     });
-    const message = await updateProductDb(productFields);
-    return createResponse(httpCodes.ok, { message });
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: err.message || err,
+
+    if (!productFields.uuid) {
+      throw new Error('ERROR: No product uuid defined');
+    }
+
+    const result = await module.product.update(productFields, {
+      where: { uuid: productFields.uuid },
+      returning: true,
     });
+
+    return createResponse(httpCodes.ok, { message: result[1] });
+  } catch (err) {
+    console.error(err.message || err);
+    throw err;
   }
 }
 
 async function deleteProduct(params) {
+  const { uuid } = params;
   try {
-    await deleteProductDb(params.uuid);
+    if (!uuid) {
+      throw new Error('ERROR: No product id defined');
+    }
+
+    await models.product.update(
+      {
+        deleteDate: new Date(),
+      },
+      {
+        where: { uuid },
+      },
+    );
+
     return createResponse(httpCodes.ok);
   } catch (err) {
-    return createResponse(httpCodes.badRequest, {
+    return createResponse(httpCodes.badReq, {
       error: err.message || err,
     });
   }
@@ -355,7 +387,7 @@ module.exports = {
   discountAsyncPOST,
   uploadDataCsv,
   createProduct,
-  updateProductPut,
+  updateProduct,
   deleteProduct,
   getAllProducts,
   getProductByUuid,

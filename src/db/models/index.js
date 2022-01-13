@@ -51,8 +51,6 @@ module.exports = db;
 
 // module.exports = {
 
-//   createProductDb: async
-
 //   updateProductDb: async ({ uuid, ...productToUpdate }) => {
 //     try {
 //       if (!uuid) {
@@ -69,48 +67,4 @@ module.exports = db;
 //       console.error(err.message || err);
 //       throw err;
 //     }
-//   },
-
-//   getProductAllDb: async () => {
-//     try {
-//       const res = await Product.findAll({
-//         where: {
-//           deleteDate: null,
-//         },
-//         raw: true,
-//         nest: true,
-//       });
-
-//       return res;
-//     } catch (err) {
-//       console.error(err.message || err);
-//       throw err;
-//     }
-//   },
-
-//   deleteProductDb: async (uuid) => {
-//     try {
-//       if (!uuid) {
-//         throw new Error('ERROR: No product id defined');
-//       }
-
-//       await Product.update(
-//         {
-//           deleteDate: new Date(),
-//         },
-//         {
-//           where: { uuid },
-//         },
-//       );
-
-//       return {
-//         code: 200,
-//       };
-//     } catch (err) {
-//       console.error(err.message || err);
-//       throw err;
-//     }
-//   },
-
-//   Product,
-// };
+//   }
