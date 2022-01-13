@@ -1,7 +1,7 @@
 const { Transform } = require('stream');
-// const { createProductDb, Product, updateProductDb } = require('../../db/models');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
+const models = require('../../db/models');
 
 function createCsvToJsonOld() {
   let isFirstChunk = true;
@@ -45,7 +45,7 @@ function createCsvToJsonOld() {
     // eslint-disable-next-line no-restricted-syntax
     for (const obj of chunkWithoutDoubles) {
       // eslint-disable-next-line no-await-in-loop
-      const res = await Product.findAll({
+      const res = await models.product.findAll({
         where: {
           item: obj.item,
           type: obj.type,
@@ -55,19 +55,30 @@ function createCsvToJsonOld() {
         raw: true,
         nest: true,
       });
+      console.log(res);
       if (res.length === 0) {
-        createProductDb({
-          item: obj.item,
-          type: obj.type,
-          measure: obj.measure,
-          measureValue: obj.measureValue,
-          priceType: obj.priceType,
-          priceValue: obj.priceValue,
-        });
+        // eslint-disable-next-line no-await-in-loop
+        await models.product.create(
+          {
+            item: obj.item,
+            type: obj.type,
+            measure: obj.measure,
+            measureValue: obj.measureValue,
+            priceType: obj.priceType,
+            priceValue: obj.priceValue,
+          },
+          {
+            returning: true,
+          },
+        );
       } else {
         const existedProduct = res[0];
         existedProduct.measureValue += obj.measureValue;
-        updateProductDb(existedProduct);
+        // eslint-disable-next-line no-await-in-loop
+        await models.product.update(existedProduct, {
+          where: { uuid: existedProduct.uuid },
+          returning: true,
+        });
       }
     }
     callback(null);

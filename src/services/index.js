@@ -19,13 +19,6 @@ const {
 
 const discount = require('./helpers/discount');
 const uploadCsv = require('./helpers/uploadCsv');
-// const {
-//   getProductDb,
-//   createProductDb,
-//   updateProductDb,
-//   getProductAllDb,
-//   deleteProductDb,
-// } = require('../db/models');
 
 function createResponse(code, message) {
   return { code, message };
@@ -332,7 +325,7 @@ async function updateProduct(req) {
       throw new Error('ERROR: No product uuid defined');
     }
 
-    const result = await module.product.update(productFields, {
+    const result = await models.product.update(productFields, {
       where: { uuid: productFields.uuid },
       returning: true,
     });

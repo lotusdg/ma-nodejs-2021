@@ -48,23 +48,3 @@ sequelize.sync(sequelizeOptions).catch((err) => {
 });
 
 module.exports = db;
-
-// module.exports = {
-
-//   updateProductDb: async ({ uuid, ...productToUpdate }) => {
-//     try {
-//       if (!uuid) {
-//         throw new Error('ERROR: No product uuid defined');
-//       }
-
-//       const res = await Product.update(productToUpdate, {
-//         where: { uuid },
-//         returning: true,
-//       });
-
-//       return res[1];
-//     } catch (err) {
-//       console.error(err.message || err);
-//       throw err;
-//     }
-//   }
