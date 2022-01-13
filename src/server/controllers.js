@@ -1,4 +1,5 @@
 const services = require('../services');
+
 const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
@@ -126,7 +127,7 @@ async function createProduct(req, res) {
     const { code, message } = await services.createProduct(req);
     resFinish(res, code, message);
   } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
@@ -135,7 +136,7 @@ async function getProductByUuid(req, res) {
     const { code, message } = await services.getProductByUuid(req.query);
     resFinish(res, code, message);
   } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 

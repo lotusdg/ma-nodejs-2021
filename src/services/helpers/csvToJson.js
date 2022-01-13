@@ -1,5 +1,5 @@
 const { Transform } = require('stream');
-const { createProductDb, Product, updateProductDb } = require('../../db');
+// const { createProductDb, Product, updateProductDb } = require('../../db/models');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
 

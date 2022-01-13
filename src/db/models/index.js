@@ -1,0 +1,116 @@
+const fs = require('fs');
+const path = require('path');
+const { Sequelize, DataTypes } = require('sequelize');
+
+const { db: dbConfig } = require('../../config');
+
+const sequelize = new Sequelize(
+  dbConfig.database,
+  dbConfig.user,
+  dbConfig.password,
+  {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    dialect: dbConfig.dialect,
+  },
+);
+
+const fileBaseName = path.basename(__filename);
+const db = {};
+
+fs.readdirSync(__dirname)
+  .filter((file) => {
+    const returnFile =
+      file.indexOf('.') !== 0 &&
+      file !== fileBaseName &&
+      file.slice(-3) === '.js';
+    return returnFile;
+  })
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+const sequelizeOptions = { logging: console.log };
+
+sequelize.sync(sequelizeOptions).catch((err) => {
+  console.log(err);
+  process.exit();
+});
+
+module.exports = db;
+
+// module.exports = {
+
+//   createProductDb: async
+
+//   updateProductDb: async ({ uuid, ...productToUpdate }) => {
+//     try {
+//       if (!uuid) {
+//         throw new Error('ERROR: No product uuid defined');
+//       }
+
+//       const res = await Product.update(productToUpdate, {
+//         where: { uuid },
+//         returning: true,
+//       });
+
+//       return res[1];
+//     } catch (err) {
+//       console.error(err.message || err);
+//       throw err;
+//     }
+//   },
+
+//   getProductAllDb: async () => {
+//     try {
+//       const res = await Product.findAll({
+//         where: {
+//           deleteDate: null,
+//         },
+//         raw: true,
+//         nest: true,
+//       });
+
+//       return res;
+//     } catch (err) {
+//       console.error(err.message || err);
+//       throw err;
+//     }
+//   },
+
+//   deleteProductDb: async (uuid) => {
+//     try {
+//       if (!uuid) {
+//         throw new Error('ERROR: No product id defined');
+//       }
+
+//       await Product.update(
+//         {
+//           deleteDate: new Date(),
+//         },
+//         {
+//           where: { uuid },
+//         },
+//       );
+
+//       return {
+//         code: 200,
+//       };
+//     } catch (err) {
+//       console.error(err.message || err);
+//       throw err;
+//     }
+//   },
+
+//   Product,
+// };
