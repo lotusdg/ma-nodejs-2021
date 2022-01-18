@@ -1,4 +1,5 @@
 const services = require('../services');
+const product = require('../services/product');
 
 const { httpCodes } = require('../services/helpers');
 
@@ -124,7 +125,7 @@ async function dataPUT(req, res, next) {
 
 async function createProduct(req, res) {
   try {
-    const { code, message } = await services.createProduct(req);
+    const { code, message } = await product.createProduct(req.body);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
@@ -133,7 +134,7 @@ async function createProduct(req, res) {
 
 async function getProductByUuid(req, res) {
   try {
-    const { code, message } = await services.getProductByUuid(req.query);
+    const { code, message } = await product.getProductByUuid(req.query);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
@@ -142,7 +143,7 @@ async function getProductByUuid(req, res) {
 
 async function updateProduct(req, res) {
   try {
-    const { code, message } = await services.updateProduct(req);
+    const { code, message } = await product.updateProduct(req.body);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
@@ -151,7 +152,7 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const { code } = await services.deleteProduct(req.query);
+    const { code } = await product.deleteProduct(req.query);
     resFinish(res, code);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
@@ -160,7 +161,7 @@ async function deleteProduct(req, res) {
 
 async function getAllProducts(req, res) {
   try {
-    const { code, message } = await services.getAllProducts();
+    const { code, message } = await product.getAllProducts(req.body);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });

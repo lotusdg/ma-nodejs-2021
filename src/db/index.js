@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { Sequelize, DataTypes } = require('sequelize');
 
-const { db: dbConfig } = require('../../config');
+const { db: dbConfig } = require('../config');
 
 const sequelize = new Sequelize(
   dbConfig.database,
@@ -18,7 +18,7 @@ const sequelize = new Sequelize(
 const fileBaseName = path.basename(__filename);
 const db = {};
 
-fs.readdirSync(__dirname)
+fs.readdirSync(path.join(__dirname, 'models'))
   .filter((file) => {
     const returnFile =
       file.indexOf('.') !== 0 &&
@@ -27,7 +27,10 @@ fs.readdirSync(__dirname)
     return returnFile;
   })
   .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, DataTypes);
+    const model = require(path.join(__dirname, 'models', file))(
+      sequelize,
+      DataTypes,
+    );
     db[model.name] = model;
   });
 

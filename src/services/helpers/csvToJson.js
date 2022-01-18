@@ -1,7 +1,7 @@
 const { Transform } = require('stream');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
-const models = require('../../db/models');
+const product = require('../product');
 
 function createCsvToJsonOld() {
   let isFirstChunk = true;
@@ -44,41 +44,22 @@ function createCsvToJsonOld() {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const obj of chunkWithoutDoubles) {
-      // eslint-disable-next-line no-await-in-loop
-      const res = await models.product.findAll({
-        where: {
-          item: obj.item,
-          type: obj.type,
-          priceValue: obj.priceValue,
-          deleteDate: null,
-        },
-        raw: true,
-        nest: true,
-      });
-      console.log(res);
-      if (res.length === 0) {
+      const Obj = obj;
+      try {
         // eslint-disable-next-line no-await-in-loop
-        await models.product.create(
-          {
-            item: obj.item,
-            type: obj.type,
-            measure: obj.measure,
-            measureValue: obj.measureValue,
-            priceType: obj.priceType,
-            priceValue: obj.priceValue,
-          },
-          {
-            returning: true,
-          },
-        );
-      } else {
-        const existedProduct = res[0];
-        existedProduct.measureValue += obj.measureValue;
-        // eslint-disable-next-line no-await-in-loop
-        await models.product.update(existedProduct, {
-          where: { uuid: existedProduct.uuid },
-          returning: true,
-        });
+        const { message } = await product.getAllProducts(Obj);
+        if (message.message === 'There is no items') {
+          // eslint-disable-next-line no-await-in-loop
+          await product.createProduct(Obj);
+        } else {
+          Obj.uuid = message.message[0].uuid;
+          Obj.measureValue += message.message[0].measureValue;
+          // eslint-disable-next-line no-await-in-loop
+          await product.updateProduct(Obj);
+        }
+      } catch (err) {
+        console.error(err.message || err);
+        throw new Error(err);
       }
     }
     callback(null);
