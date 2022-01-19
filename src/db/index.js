@@ -8,11 +8,7 @@ const sequelize = new Sequelize(
   dbConfig.database,
   dbConfig.user,
   dbConfig.password,
-  {
-    host: dbConfig.host,
-    port: dbConfig.port,
-    dialect: dbConfig.dialect,
-  },
+  { ...dbConfig },
 );
 
 const fileBaseName = path.basename(__filename);
@@ -42,12 +38,5 @@ Object.keys(db).forEach((modelName) => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
-const sequelizeOptions = { logging: console.log };
-
-sequelize.sync(sequelizeOptions).catch((err) => {
-  console.log(err);
-  process.exit();
-});
 
 module.exports = db;

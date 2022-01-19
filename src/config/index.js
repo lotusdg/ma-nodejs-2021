@@ -14,6 +14,7 @@ const config = {
     password: process.env.DB_PASS || fatal('FATAL: DB_PASS is not defined'),
     dialect:
       process.env.DB_DIALECT || fatal('FATAL: DB_DIALECT is not defined'),
+    logging: console.log,
   },
 };
 
