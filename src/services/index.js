@@ -4,9 +4,6 @@ const path = require('path');
 
 const util = require('util');
 
-const { db: dbConfig } = require('../config');
-const db = require('../db')(dbConfig);
-
 const {
   helper1: filterByItem,
   helper3: addPrice,
@@ -205,86 +202,8 @@ async function uploadDataCsv(req) {
     const { code, message } = await uploadCsv(req);
     return createResponse(code, { message });
   } catch (err) {
-    return createResponse(httpCodes.badRequest, {
+    return createResponse(httpCodes.badReq, {
       error: 'Can not convert csv to JSON',
-    });
-  }
-}
-
-async function testDBConnection() {
-  try {
-    const message = await db.testConnection();
-    return createResponse(httpCodes.ok, message);
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Failed db connection',
-    });
-  }
-}
-
-async function createProduct(req) {
-  try {
-    const product = req.body;
-    const message = await db.createProduct({
-      item: product.item,
-      type: product.type,
-      measure: product.measure,
-      measureValue: product.measureValue,
-      priceType: product.priceType,
-      priceValue: product.priceValue,
-    });
-    return createResponse(httpCodes.ok, message);
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Incorrect data',
-    });
-  }
-}
-
-async function getProductById(params) {
-  try {
-    const message = await db.getProduct(params.id);
-    return createResponse(httpCodes.ok, message);
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Failed params',
-    });
-  }
-}
-
-async function updateProductPut(req) {
-  try {
-    const product = req.body;
-    const productFields = {
-      id: product.id,
-      item: product.item,
-      type: product.type,
-      measure: product.measure,
-      measurevalue: product.measureValue,
-      pricetype: product.priceType,
-      pricevalue: product.priceValue,
-    };
-    Object.keys(productFields).forEach((key) => {
-      if (typeof productFields[key] === 'undefined') {
-        delete productFields[key];
-      }
-    });
-    const message = await db.updateProduct(productFields);
-    return createResponse(httpCodes.ok, message);
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Incorrect data',
-    });
-  }
-}
-
-async function deleteProduct(params) {
-  try {
-    const message = await db.deleteProduct(params.id);
-    return createResponse(httpCodes.ok, message);
-  } catch (err) {
-    return createResponse(httpCodes.badRequest, {
-      error: 'Failed params',
     });
   }
 }
@@ -307,9 +226,4 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   uploadDataCsv,
-  testDBConnection,
-  createProduct,
-  getProductById,
-  updateProductPut,
-  deleteProduct,
 };

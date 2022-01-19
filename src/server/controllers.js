@@ -1,4 +1,6 @@
 const services = require('../services');
+const product = require('../services/product');
+
 const { httpCodes } = require('../services/helpers');
 
 function resFinish(res, code, message) {
@@ -121,36 +123,27 @@ async function dataPUT(req, res, next) {
   } else next(new Error('wrong header'));
 }
 
-async function testDBConnection(req, res) {
-  try {
-    const { code, message } = await services.testDBConnection();
-    resFinish(res, code, message);
-  } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
-  }
-}
-
 async function createProduct(req, res) {
   try {
-    const { code, message } = await services.createProduct(req);
+    const { code, message } = await product.createProduct(req.body);
     resFinish(res, code, message);
   } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
-async function getProductById(req, res) {
+async function getProductByUuid(req, res) {
   try {
-    const { code, message } = await services.getProductById(req.query);
+    const { code, message } = await product.getProductByUuid(req.query);
     resFinish(res, code, message);
   } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
 async function updateProduct(req, res) {
   try {
-    const { code, message } = await services.updateProductPut(req);
+    const { code, message } = await product.updateProduct(req.body);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
@@ -159,10 +152,19 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const { code, message } = await services.deleteProduct(req.query);
-    resFinish(res, code, message);
+    const { code } = await product.deleteProduct(req.query);
+    resFinish(res, code);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });
+  }
+}
+
+async function getAllProducts(req, res) {
+  try {
+    const { code, message } = await product.getAllProducts(req.body);
+    resFinish(res, code, message);
+  } catch (e) {
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
@@ -183,9 +185,9 @@ module.exports = {
   discountAsyncGET,
   discountAsyncPOST,
   dataPUT,
-  testDBConnection,
   createProduct,
-  getProductById,
+  getProductByUuid,
   updateProduct,
   deleteProduct,
+  getAllProducts,
 };

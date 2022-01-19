@@ -12,6 +12,9 @@ const config = {
     port: process.env.DB_PORT || fatal('FATAL: DB_PORT is not defined'),
     database: process.env.DB_NAME || fatal('FATAL: DB_NAME is not defined'),
     password: process.env.DB_PASS || fatal('FATAL: DB_PASS is not defined'),
+    dialect:
+      process.env.DB_DIALECT || fatal('FATAL: DB_DIALECT is not defined'),
+    logging: console.log,
   },
 };
 

@@ -23,6 +23,10 @@ function deleteDoubles(array) {
     }
   });
 
+  arrayWithoutDoubles.forEach((element) => {
+    // eslint-disable-next-line no-param-reassign
+    element.measureValue = +element.measureValue;
+  });
   return arrayWithoutDoubles;
 }
 
