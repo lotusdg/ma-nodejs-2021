@@ -1,12 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('product', {
-    uuid: {
+    UUID: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      allowNull: false,
     },
-    item: DataTypes.STRING,
-    type: DataTypes.STRING,
+    itemID: DataTypes.STRING,
+    typeID: DataTypes.STRING,
     measure: DataTypes.STRING,
     measureValue: DataTypes.FLOAT,
     priceType: DataTypes.STRING,
