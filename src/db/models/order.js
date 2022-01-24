@@ -10,5 +10,16 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
   });
 
+  Order.associate = (models) => {
+    Order.belongsTo(models.User, {
+      foreignKey: 'userID',
+      foreignKeyConstraint: true,
+    });
+    Order.belongsTo(models.Product, {
+      foreignKey: 'productID',
+      foreignKeyConstraint: true,
+    });
+  };
+
   return Order;
 };

@@ -15,5 +15,17 @@ module.exports = (sequelize, DataTypes) => {
     deleteDate: DataTypes.DATE,
   });
 
+  Product.associate = (models) => {
+    Product.belongsTo(models.Item, {
+      foreignKey: 'itemID',
+      foreignKeyConstraint: true,
+    });
+    Product.belongsTo(models.Type, {
+      foreignKey: 'typeID',
+      foreignKeyConstraint: true,
+    });
+    Product.hasMany(models.Order);
+  };
+
   return Product;
 };
