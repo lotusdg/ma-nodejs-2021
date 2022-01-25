@@ -6,25 +6,17 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
-    itemID: DataTypes.STRING,
-    typeID: DataTypes.STRING,
     measure: DataTypes.STRING,
     measureValue: DataTypes.FLOAT,
     priceType: DataTypes.STRING,
     priceValue: DataTypes.STRING,
-    deleteDate: DataTypes.DATE,
+    deletedAt: DataTypes.DATE,
   });
 
   Product.associate = (models) => {
-    Product.belongsTo(models.Item, {
-      foreignKey: 'itemID',
-      foreignKeyConstraint: true,
-    });
-    Product.belongsTo(models.Type, {
-      foreignKey: 'typeID',
-      foreignKeyConstraint: true,
-    });
-    Product.hasMany(models.Order);
+    Product.belongsTo(models.item);
+    Product.belongsTo(models.type);
+    Product.hasMany(models.order);
   };
 
   return Product;

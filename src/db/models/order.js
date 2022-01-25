@@ -6,19 +6,13 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
-    login: DataTypes.STRING,
-    password: DataTypes.STRING,
+    quantity: DataTypes.FLOAT,
+    status: DataTypes.STRING,
   });
 
   Order.associate = (models) => {
-    Order.belongsTo(models.User, {
-      foreignKey: 'userID',
-      foreignKeyConstraint: true,
-    });
-    Order.belongsTo(models.Product, {
-      foreignKey: 'productID',
-      foreignKeyConstraint: true,
-    });
+    Order.belongsTo(models.user);
+    Order.belongsTo(models.product);
   };
 
   return Order;

@@ -39,4 +39,13 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+// синхронизация всех моделей
+
+// async function sync() {
+//   await sequelize.sync({ force: true });
+//   console.log('Все модели были успешно синхронизированы.');
+// }
+
+// sync();
+
 module.exports = db;
