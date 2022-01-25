@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "sequelize:migrate:make": "./node_modules/.bin/sequelize --migrations-path=./src/db/migrations migration:generate --name",
+    "sequelize:migrate:latest": "./node_modules/.bin/sequelize --migrations-path=./src/db/migrations --config=./src/db/config/config.js db:migrate",
+    "sequelize:migrate:undo": "./node_modules/.bin/sequelize --migrations-path=./src/db/migrations --config=./src/db/config/config.js db:migrate:undo"
   },
   "keywords": [],
   "author": "",
