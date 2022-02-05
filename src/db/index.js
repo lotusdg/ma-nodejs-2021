@@ -6,7 +6,7 @@ const { db: dbConfig } = require('../config');
 
 const sequelize = new Sequelize(
   dbConfig.database,
-  dbConfig.user,
+  dbConfig.username,
   dbConfig.password,
   { ...dbConfig },
 );

@@ -1,5 +1,6 @@
-const { product } = require('../db');
+const db = require('../db');
 const { httpCodes } = require('./helpers');
+const { validateParam } = require('./helpers/newValidator');
 
 function createResponse(code, message) {
   return { code, message };
@@ -12,7 +13,7 @@ async function getProductByUuid(params) {
       throw new Error('ERROR: No product uuid defined');
     }
 
-    const result = await product.findAll({
+    const result = await db.product.findAll({
       where: {
         uuid,
         deleteDate: null,
@@ -53,7 +54,7 @@ async function createProduct(body) {
     if (!priceValue) {
       throw new Error('ERROR: No price value defined');
     }
-    const message = await product.create(
+    const message = await db.product.create(
       {
         item,
         type,
@@ -73,40 +74,20 @@ async function createProduct(body) {
   }
 }
 
-async function getAllProducts(body) {
-  let result;
+async function getProducts(obj) {
   try {
-    if (body.item !== undefined) {
-      result = await product.findAll({
-        where: {
-          item: body.item,
-          type: body.type,
-          priceValue: body.priceValue,
-          deleteDate: null,
-        },
-        raw: true,
-        nest: true,
-      });
-    } else {
-      result = await product.findAll({
-        where: {
-          deleteDate: null,
-        },
-        raw: true,
-        nest: true,
-      });
-    }
+    // const validObj = validateParam(obj);
+    const result = await db.product.findAll({
+      where: { ...obj, deletedAt: obj.deletedAt || null },
+    });
     if (result.length === 0) {
       return createResponse(httpCodes.ok, {
         message: 'There is no items',
       });
     }
-
     return createResponse(httpCodes.ok, { message: result });
   } catch (err) {
-    return createResponse(httpCodes.badReq, {
-      error: err.message || err,
-    });
+    return createResponse(httpCodes.badReq, { message: err.message || err });
   }
 }
 
@@ -127,7 +108,7 @@ async function updateProduct(body) {
       }
     });
 
-    const result = await product.update(productFields, {
+    const result = await db.product.update(productFields, {
       where: { uuid: productFields.uuid },
       returning: true,
     });
@@ -146,7 +127,7 @@ async function deleteProduct(params) {
       throw new Error('ERROR: No product id defined');
     }
 
-    await product.update(
+    await db.product.update(
       {
         deleteDate: new Date(),
       },
@@ -166,7 +147,7 @@ async function deleteProduct(params) {
 module.exports = {
   getProductByUuid,
   createProduct,
-  getAllProducts,
+  getProducts,
   updateProduct,
   deleteProduct,
 };

@@ -8,7 +8,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     measure: DataTypes.STRING,
     measureValue: DataTypes.FLOAT,
-    priceType: DataTypes.STRING,
     priceValue: DataTypes.STRING,
     deletedAt: DataTypes.DATE,
   });

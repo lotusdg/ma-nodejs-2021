@@ -9,7 +9,20 @@ module.exports = {
       },
       measure: Sequelize.DataTypes.STRING,
       measureValue: Sequelize.DataTypes.FLOAT,
-      priceType: Sequelize.DataTypes.STRING,
+      typeID: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: 'types',
+          key: 'ID',
+        },
+      },
+      itemID: {
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+          model: 'items',
+          key: 'ID',
+        },
+      },
       priceValue: Sequelize.DataTypes.STRING,
       deletedAt: Sequelize.DataTypes.DATE,
       createdAt: Sequelize.DataTypes.DATE,
@@ -17,12 +30,8 @@ module.exports = {
     });
   },
 
+  // eslint-disable-next-line no-unused-vars
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    await queryInterface.dropTable('products');
   },
 };

@@ -2,6 +2,7 @@ const services = require('../services');
 const product = require('../services/product');
 
 const { httpCodes } = require('../services/helpers');
+const { validateBody } = require('../services/helpers/newValidator');
 
 function resFinish(res, code, message) {
   res.status(code).json(message);
@@ -17,13 +18,19 @@ function notFound(req, res) {
   resFinish(res, code, message);
 }
 
-function filter(req, res) {
-  const { message, code } = services.filter(req.query);
+async function getFilter(req, res) {
+  const { message, code } = await product.getProducts(req.query);
   resFinish(res, code, message);
 }
-function postFilter(req, res) {
-  const { message, code } = services.postFilter(req.body, req.query);
-  resFinish(res, code, message);
+
+async function postFilter(req, res) {
+  try {
+    const validObj = validateBody(req.body);
+    const { message, code } = await product.getProducts(validObj);
+    resFinish(res, code, message);
+  } catch (err) {
+    resFinish(res, httpCodes.badReq, { error: err.message || err });
+  }
 }
 
 function topPrice(req, res) {
@@ -171,7 +178,7 @@ async function getAllProducts(req, res) {
 module.exports = {
   home,
   notFound,
-  filter,
+  getFilter,
   postFilter,
   topPrice,
   findTopPricePost,
