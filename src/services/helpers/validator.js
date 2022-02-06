@@ -30,7 +30,9 @@ function validateBodyReq(array) {
     if (
       priceValue !== undefined &&
       !(
-        (typeof priceValue === 'string' && priceValue.charAt(0) === '$') ||
+        (typeof priceValue === 'string' &&
+          priceValue.charAt(0) === '$' &&
+          !Number.isNaN(parseFloat(priceValue.slice(1)))) ||
         priceValue === null
       )
     ) {

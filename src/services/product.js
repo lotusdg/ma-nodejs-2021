@@ -79,7 +79,7 @@ async function getProducts() {
       where: { deletedAt: null },
     });
     if (result.length === 0) {
-      return [];
+      throw new Error('Products not found');
     }
     return result;
   } catch (err) {

@@ -36,10 +36,6 @@ function notFound() {
 async function getFilter(params) {
   try {
     let result = await getProducts();
-    if (Object.keys(params).length === 0) {
-      return createResponse(httpCodes.ok, { message: result });
-    }
-
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(params)) {
       const element = params[key];
@@ -47,7 +43,7 @@ async function getFilter(params) {
     }
     if (result.length === 0) {
       return createResponse(httpCodes.badReq, {
-        message: 'products not found',
+        message: 'products with this params not found',
       });
     }
     return createResponse(httpCodes.ok, { message: result });
@@ -81,9 +77,14 @@ function postFilter(body, params) {
 
 // ---------------------------- findTopPriceGET ----------------------------- //
 
-function topPrice() {
-  const result = findTopPrice(data);
-  return createResponse(httpCodes.ok, result);
+async function topPrice() {
+  try {
+    const dataFromDB = await getProducts();
+    const result = findTopPrice(dataFromDB);
+    return createResponse(httpCodes.ok, { message: result });
+  } catch (err) {
+    return createResponse(httpCodes.badReq, { error: err.message || err });
+  }
 }
 
 // ------------------------- findTopPricePost ------------------------------- //
@@ -101,9 +102,14 @@ function findTopPricePost(body) {
 
 // ---------------------------- commonPriceGET ----------------------------- //
 
-function commonPriceGET() {
-  const result = addPrice(data);
-  return createResponse(httpCodes.ok, result);
+async function commonPriceGET() {
+  try {
+    const dataFromDB = await getProducts();
+    const result = addPrice(dataFromDB);
+    return createResponse(httpCodes.ok, { message: result });
+  } catch (err) {
+    return createResponse(httpCodes.badReq, { error: err.message || err });
+  }
 }
 
 // ------------------------- commonPricePOST ------------------------------- //
@@ -114,7 +120,7 @@ function commonPricePost(body) {
     return createResponse(httpCodes.badReq, { error: err.error });
   }
   const result = addPrice(validArray);
-  return createResponse(httpCodes.ok, result);
+  return createResponse(httpCodes.ok, { message: result });
 }
 
 // ---------------------------- dataPost ----------------------------- //

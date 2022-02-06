@@ -27,17 +27,18 @@ async function postFilter(req, res) {
   resFinish(res, code, message);
 }
 
-function getTopPrice(req, res) {
-  const { message, code } = services.topPrice();
+async function getTopPrice(req, res) {
+  const { message, code } = await services.topPrice();
   resFinish(res, code, message);
 }
+
 function postTopPrice(req, res) {
   const { message, code } = services.findTopPricePost(req.body);
   resFinish(res, code, message);
 }
 
-function commonPriceGET(req, res) {
-  const { message, code } = services.commonPriceGET();
+async function commonPriceGET(req, res) {
+  const { message, code } = await services.commonPriceGET();
   resFinish(res, code, message);
 }
 function commonPricePost(req, res) {
