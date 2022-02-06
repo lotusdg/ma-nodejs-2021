@@ -90,9 +90,9 @@ async function getProducts() {
 async function updateProduct(body) {
   try {
     const productFields = {
-      uuid: body.uuid,
-      item: body.item,
-      type: body.type,
+      UUID: body.UUID,
+      itemID: body.itemID,
+      typeID: body.typeID,
       measure: body.measure,
       measureValue: body.measureValue,
       priceType: body.priceType,
@@ -105,7 +105,7 @@ async function updateProduct(body) {
     });
 
     const result = await db.product.update(productFields, {
-      where: { uuid: productFields.uuid },
+      where: { UUID: productFields.UUID },
       returning: true,
     });
 
@@ -140,10 +140,30 @@ async function deleteProduct(params) {
   }
 }
 
+async function getProductByTypeAndPrice(typeID, priceValue) {
+  try {
+    if (!typeID) {
+      throw new Error('ERROR: No product type defined');
+    }
+    const res = await db.product.findOne({
+      where: {
+        typeID,
+        priceValue,
+        deletedAt: null,
+      },
+    });
+    return res;
+  } catch (err) {
+    console.error(err.message || err);
+    throw err;
+  }
+}
+
 module.exports = {
   getProductByUuid,
   createProduct,
   getProducts,
   updateProduct,
   deleteProduct,
+  getProductByTypeAndPrice,
 };

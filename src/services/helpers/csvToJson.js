@@ -2,6 +2,7 @@ const { Transform } = require('stream');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
 const product = require('../product');
+const { findOrCreateObj } = require('./findOrCreateObj');
 
 function createCsvToJsonOld() {
   let isFirstChunk = true;
@@ -44,19 +45,9 @@ function createCsvToJsonOld() {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const obj of chunkWithoutDoubles) {
-      const Obj = obj;
       try {
         // eslint-disable-next-line no-await-in-loop
-        const { message } = await product.getAllProducts(Obj);
-        if (message.message === 'There is no items') {
-          // eslint-disable-next-line no-await-in-loop
-          await product.createProduct(Obj);
-        } else {
-          Obj.uuid = message.message[0].uuid;
-          Obj.measureValue += message.message[0].measureValue;
-          // eslint-disable-next-line no-await-in-loop
-          await product.updateProduct(Obj);
-        }
+        await findOrCreateObj(obj);
       } catch (err) {
         console.error(err.message || err);
         throw new Error(err);

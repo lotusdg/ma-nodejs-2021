@@ -145,9 +145,10 @@ function dataPost(body) {
 
 // ---------------------------- promiseGET ----------------------------- //
 
-function promiseGET() {
+async function promiseGET() {
+  const dataFromDB = await getProducts();
   return new Promise((resolve) => {
-    addDiscountPromise(data).then((fruitsWithDiscount) => {
+    addDiscountPromise(dataFromDB).then((fruitsWithDiscount) => {
       resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
     });
   });
@@ -170,12 +171,13 @@ function promisePOST(body) {
 
 // ---------------------------- promisifyGET ----------------------------- //
 
-function promisifyGET() {
+async function promisifyGET() {
+  const dataFromDB = await getProducts();
   const discountPromisify = util.promisify(discount);
   return new Promise((resolve) => {
     discountPromisify()
       .then((value) => {
-        const fruitsWithDiscount = addDiscountPrice(value, data);
+        const fruitsWithDiscount = addDiscountPrice(value, dataFromDB);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
       .catch(() => promisifyGET());

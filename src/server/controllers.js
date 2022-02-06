@@ -163,8 +163,8 @@ async function deleteProduct(req, res) {
 
 async function getAllProducts(req, res) {
   try {
-    const { code, message } = await product.getAllProducts(req.body);
-    resFinish(res, code, message);
+    const result = await product.getProducts();
+    resFinish(res, httpCodes.ok, { message: result });
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
