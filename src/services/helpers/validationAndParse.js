@@ -1,9 +1,10 @@
 const { validateBodyReq } = require('./validator');
 
+// eslint-disable-next-line arrow-body-style
 const validationResult = (error, validArray) => {
   return {
     err: error ? { error } : null,
-    validArray: validArray,
+    validArray,
   };
 };
 

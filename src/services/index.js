@@ -17,8 +17,7 @@ const {
 
 const discount = require('./helpers/discount');
 const uploadCsv = require('./helpers/uploadCsv');
-
-const { getFilter: filter, postFilter } = require('./filter');
+const { getProducts } = require('./product');
 
 function createResponse(code, message) {
   return { code, message };
@@ -30,6 +29,54 @@ function home() {
 
 function notFound() {
   return createResponse(httpCodes.notFound, { error: 'page not found' });
+}
+
+// ------------------------ filterGET ------------------------------- //
+
+async function getFilter(params) {
+  try {
+    let result = await getProducts();
+    if (Object.keys(params).length === 0) {
+      return createResponse(httpCodes.ok, { message: result });
+    }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key of Object.keys(params)) {
+      const element = params[key];
+      result = filterByItem(result, key, element);
+    }
+    if (result.length === 0) {
+      return createResponse(httpCodes.badReq, {
+        message: 'products not found',
+      });
+    }
+    return createResponse(httpCodes.ok, { message: result });
+  } catch (err) {
+    return createResponse(httpCodes.badReq, { error: err.message || err });
+  }
+}
+
+// ------------------------ filterPost ------------------------------- //
+
+function postFilter(body, params) {
+  if (!body.length)
+    return createResponse(httpCodes.badReq, { message: 'data not found' });
+  const { err, validArray } = validationAndParse(body);
+  if (err != null) {
+    return createResponse(httpCodes.badReq, { error: err.error });
+  }
+  let result = validArray;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key of Object.keys(params)) {
+    const element = params[key];
+    result = filterByItem(result, key, element);
+  }
+  if (result.length === 0) {
+    return createResponse(httpCodes.badReq, {
+      message: 'products not found',
+    });
+  }
+  return createResponse(httpCodes.ok, { message: result });
 }
 
 // ---------------------------- findTopPriceGET ----------------------------- //
@@ -177,6 +224,8 @@ async function uploadDataCsv(req) {
 module.exports = {
   home,
   notFound,
+  getFilter,
+  postFilter,
   topPrice,
   findTopPricePost,
   commonPriceGET,

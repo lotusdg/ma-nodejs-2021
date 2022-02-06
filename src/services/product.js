@@ -1,6 +1,5 @@
 const db = require('../db');
 const { httpCodes } = require('./helpers');
-const { validateParam } = require('./helpers/newValidator');
 
 function createResponse(code, message) {
   return { code, message };
@@ -74,20 +73,17 @@ async function createProduct(body) {
   }
 }
 
-async function getProducts(obj) {
+async function getProducts() {
   try {
-    // const validObj = validateParam(obj);
     const result = await db.product.findAll({
-      where: { ...obj, deletedAt: obj.deletedAt || null },
+      where: { deletedAt: null },
     });
     if (result.length === 0) {
-      return createResponse(httpCodes.ok, {
-        message: 'There is no items',
-      });
+      return [];
     }
-    return createResponse(httpCodes.ok, { message: result });
+    return result;
   } catch (err) {
-    return createResponse(httpCodes.badReq, { message: err.message || err });
+    throw new Error(err.message || err);
   }
 }
 
