@@ -3,6 +3,7 @@ const express = require('express');
 const server = express();
 const bodyParser = require('body-parser');
 const product = require('./product');
+const orders = require('./orders');
 const discount = require('./discount');
 const common = require('./common');
 const { authorization, errorHandler } = require('../middlewares');
@@ -13,6 +14,7 @@ server.use(bodyParser.urlencoded({ extended: true }));
 
 server.use(authorization);
 server.use('/product', product);
+server.use('/orders', orders);
 server.use('/discount', discount);
 server.use(common);
 server.use((req, res) =>
