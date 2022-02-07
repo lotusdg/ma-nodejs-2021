@@ -1,7 +1,6 @@
 const { Transform } = require('stream');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
-const product = require('../product');
 const { findOrCreateObj } = require('./findOrCreateObj');
 
 function createCsvToJsonOld() {

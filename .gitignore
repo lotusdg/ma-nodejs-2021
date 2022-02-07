@@ -2,3 +2,4 @@ node_modules
 upload
 test.js
 .env
+data.json

@@ -1,8 +1,23 @@
 const db = require('../db');
-const { httpCodes } = require('./helpers');
+const { httpCodes, validationAndParse } = require('./helpers');
 
 function createResponse(code, message) {
   return { code, message };
+}
+
+async function getProducts() {
+  try {
+    const result = await db.product.findAll({
+      where: {
+        deletedAt: null,
+      },
+      attributes: { exclude: ['itemID', 'typeID'] },
+      include: [{ model: db.item }, { model: db.type }],
+    });
+    return result;
+  } catch (err) {
+    throw new Error(err.message || err);
+  }
 }
 
 async function getProductByUuid(params) {
@@ -33,57 +48,34 @@ async function getProductByUuid(params) {
 
 async function createProduct(body) {
   try {
-    const { item, type, measure, measureValue, priceType, priceValue } = body;
-
-    if (!item) {
-      throw new Error('ERROR: No item defined');
+    const { err } = validationAndParse([body]);
+    if (err) {
+      throw new Error(err.message || err);
     }
-    if (!type) {
-      throw new Error('ERROR: No item type defined');
-    }
-    if (!['quantity', 'weight'].includes(measure)) {
-      throw new Error('ERROR: Item measure is not valid');
-    }
-    if (typeof measureValue !== 'number') {
-      throw new Error('ERROR: Measure value should be a valid number');
-    }
-    if (!['pricePerItem', 'pricePerKilo'].includes(priceType)) {
-      throw new Error('ERROR: Item price type is not valid');
-    }
-    if (!priceValue) {
-      throw new Error('ERROR: No price value defined');
-    }
-    const message = await db.product.create(
-      {
-        item,
-        type,
-        measure,
-        measureValue,
-        priceType,
-        priceValue,
-      },
-      {
-        returning: true,
-      },
-    );
-
-    return createResponse(httpCodes.ok, { message: message.dataValues });
+    const timestamp = Date.now();
+    const resItem = await db.item.create({
+      name: body.item,
+      createdAt: timestamp,
+      updateAt: timestamp,
+    });
+    const resType = await db.type.create({
+      name: body.item,
+      createdAt: timestamp,
+      updateAt: timestamp,
+    });
+    const result = await db.product.create({
+      measure: body.measure,
+      measureValue: body.measureValue,
+      priceValue: body.priceValue,
+      itemID: resItem.dataValues.ID,
+      typeID: resType.dataValues.ID,
+      createdAt: timestamp,
+      updateAt: timestamp,
+      deletedAt: null,
+    });
+    return createResponse(httpCodes.ok, result);
   } catch (err) {
     return createResponse(httpCodes.badReq, { error: err.message || err });
-  }
-}
-
-async function getProducts() {
-  try {
-    const result = await db.product.findAll({
-      where: { deletedAt: null },
-    });
-    if (result.length === 0) {
-      throw new Error('Products not found');
-    }
-    return result;
-  } catch (err) {
-    throw new Error(err.message || err);
   }
 }
 
@@ -109,7 +101,7 @@ async function updateProduct(body) {
       returning: true,
     });
 
-    return createResponse(httpCodes.ok, { message: result[1] });
+    return createResponse(httpCodes.ok, result[1]);
   } catch (err) {
     console.error(err.message || err);
     throw err;
@@ -117,21 +109,19 @@ async function updateProduct(body) {
 }
 
 async function deleteProduct(params) {
-  const { uuid } = params;
+  const { UUID } = params;
   try {
-    if (!uuid) {
+    if (!UUID) {
       throw new Error('ERROR: No product id defined');
     }
-
     await db.product.update(
       {
-        deleteDate: new Date(),
+        deletedAt: new Date(),
       },
       {
-        where: { uuid },
+        where: { UUID },
       },
     );
-
     return createResponse(httpCodes.ok);
   } catch (err) {
     return createResponse(httpCodes.badReq, {

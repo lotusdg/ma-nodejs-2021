@@ -14,7 +14,7 @@ const validationAndParse = (bodyData) => {
   }
   let validArray;
   try {
-    validArray = bodyData; // JSON.parse(bodyData);
+    validArray = bodyData;
     validateBodyReq(validArray);
   } catch (e) {
     return validationResult(

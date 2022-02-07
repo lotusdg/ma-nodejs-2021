@@ -10,9 +10,17 @@ function validateBodyReq(array) {
       updatedAt,
       itemID,
       typeID,
+      type,
+      item,
     } = obj;
 
     if (UUID !== undefined && typeof UUID !== 'string' && UUID.length !== 36) {
+      throw new Error('"UUID" invalid format');
+    }
+    if (type.name !== undefined && typeof type.name !== 'string') {
+      throw new Error('"UUID" invalid format');
+    }
+    if (item.name !== undefined && typeof item.name !== 'string') {
       throw new Error('"UUID" invalid format');
     }
     if (

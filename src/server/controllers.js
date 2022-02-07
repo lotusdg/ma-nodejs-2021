@@ -148,7 +148,7 @@ async function updateProduct(req, res) {
     const { code, message } = await product.updateProduct(req.body);
     resFinish(res, code, message);
   } catch (e) {
-    resFinish(res, httpCodes.badReq, { error: e.message });
+    resFinish(res, httpCodes.badReq, { error: e.message || e });
   }
 }
 
@@ -164,7 +164,7 @@ async function deleteProduct(req, res) {
 async function getAllProducts(req, res) {
   try {
     const result = await product.getProducts();
-    resFinish(res, httpCodes.ok, { message: result });
+    resFinish(res, httpCodes.ok, result);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
   }

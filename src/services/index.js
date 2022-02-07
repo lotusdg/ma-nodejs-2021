@@ -12,7 +12,6 @@ const {
   addDiscountPrice,
   validationAndParse,
   addDiscountPromise,
-  data,
 } = require('./helpers/index');
 
 const discount = require('./helpers/discount');
@@ -46,7 +45,7 @@ async function getFilter(params) {
         message: 'products with this params not found',
       });
     }
-    return createResponse(httpCodes.ok, { message: result });
+    return createResponse(httpCodes.ok, result);
   } catch (err) {
     return createResponse(httpCodes.badReq, { error: err.message || err });
   }
@@ -69,19 +68,24 @@ function postFilter(body, params) {
   }
   if (result.length === 0) {
     return createResponse(httpCodes.badReq, {
-      message: 'products not found',
+      message: 'products with this params not found',
     });
   }
-  return createResponse(httpCodes.ok, { message: result });
+  return createResponse(httpCodes.ok, result);
 }
 
 // ---------------------------- findTopPriceGET ----------------------------- //
 
 async function topPrice() {
   try {
-    const dataFromDB = await getProducts();
-    const result = findTopPrice(dataFromDB);
-    return createResponse(httpCodes.ok, { message: result });
+    const data = await getProducts();
+    if (!data) {
+      return createResponse(httpCodes.badReq, {
+        message: 'data not found',
+      });
+    }
+    const result = findTopPrice(data);
+    return createResponse(httpCodes.ok, result);
   } catch (err) {
     return createResponse(httpCodes.badReq, { error: err.message || err });
   }
@@ -104,9 +108,14 @@ function findTopPricePost(body) {
 
 async function commonPriceGET() {
   try {
-    const dataFromDB = await getProducts();
-    const result = addPrice(dataFromDB);
-    return createResponse(httpCodes.ok, { message: result });
+    const data = await getProducts();
+    if (!data) {
+      return createResponse(httpCodes.badReq, {
+        message: 'data not found',
+      });
+    }
+    const result = addPrice(data);
+    return createResponse(httpCodes.ok, result);
   } catch (err) {
     return createResponse(httpCodes.badReq, { error: err.message || err });
   }
@@ -120,7 +129,7 @@ function commonPricePost(body) {
     return createResponse(httpCodes.badReq, { error: err.error });
   }
   const result = addPrice(validArray);
-  return createResponse(httpCodes.ok, { message: result });
+  return createResponse(httpCodes.ok, result);
 }
 
 // ---------------------------- dataPost ----------------------------- //
@@ -146,9 +155,9 @@ function dataPost(body) {
 // ---------------------------- promiseGET ----------------------------- //
 
 async function promiseGET() {
-  const dataFromDB = await getProducts();
+  const data = await getProducts();
   return new Promise((resolve) => {
-    addDiscountPromise(dataFromDB).then((fruitsWithDiscount) => {
+    addDiscountPromise(data).then((fruitsWithDiscount) => {
       resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
     });
   });
@@ -172,12 +181,12 @@ function promisePOST(body) {
 // ---------------------------- promisifyGET ----------------------------- //
 
 async function promisifyGET() {
-  const dataFromDB = await getProducts();
+  const data = await getProducts();
   const discountPromisify = util.promisify(discount);
   return new Promise((resolve) => {
     discountPromisify()
       .then((value) => {
-        const fruitsWithDiscount = addDiscountPrice(value, dataFromDB);
+        const fruitsWithDiscount = addDiscountPrice(value, data);
         resolve(createResponse(httpCodes.ok, fruitsWithDiscount));
       })
       .catch(() => promisifyGET());

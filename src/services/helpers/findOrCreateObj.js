@@ -1,4 +1,4 @@
-const product = require('../product');
+const crud = require('../product');
 const db = require('../../db');
 const { validator } = require('./index');
 
@@ -13,7 +13,7 @@ async function findOrCreateObj(obj) {
       attributes: ['ID'],
       where: { name: obj.type },
     });
-    const similarProduct = await product.getProductByTypeAndPrice(
+    const similarProduct = await crud.getProductByTypeAndPrice(
       typeID,
       obj.priceValue,
     );
@@ -32,7 +32,7 @@ async function findOrCreateObj(obj) {
         },
       );
     }
-    return await product.updateProduct({
+    return await crud.updateProduct({
       UUID: similarProduct.dataValues.UUID,
       itemID,
       typeID,
