@@ -1,10 +1,10 @@
-const orders = require('../../services/orders');
+const services = require('../../services');
 
 const { resFinish, httpCodes } = require('../../services/helpers');
 
 async function getAllOrders(req, res) {
   try {
-    const result = await orders.getAllOrders();
+    const result = await services.getAllOrders();
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });
@@ -13,7 +13,7 @@ async function getAllOrders(req, res) {
 
 async function getOrderById(req, res) {
   try {
-    const result = await orders.getOrderById(req.query.ID);
+    const result = await services.getOrderById(req.query.id);
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });
@@ -22,7 +22,7 @@ async function getOrderById(req, res) {
 
 async function createOrder(req, res) {
   try {
-    const result = await orders.createOrder(req.body);
+    const result = await services.createOrder(req.body);
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });
@@ -31,8 +31,8 @@ async function createOrder(req, res) {
 
 async function updateOrder(req, res) {
   try {
-    const result = await orders.updateOrder({
-      ID: req.query.ID,
+    const result = await services.updateOrder({
+      id: req.query.id,
       ...req.body,
     });
     resFinish(res, httpCodes.ok, result);
@@ -43,7 +43,7 @@ async function updateOrder(req, res) {
 
 async function deleteOrderIfExists(req, res) {
   try {
-    const result = await orders.deleteOrder(req.query.ID);
+    const result = await services.deleteOrder(req.query.id);
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });

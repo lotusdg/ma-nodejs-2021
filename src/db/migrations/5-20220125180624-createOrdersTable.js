@@ -1,24 +1,24 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('orders', {
-      ID: {
+      id: {
         type: Sequelize.DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      productUUID: {
+      productUuid: {
         type: Sequelize.DataTypes.UUID,
         references: {
           model: 'products',
-          key: 'UUID',
+          key: 'Uuid',
         },
       },
-      userID: {
+      userId: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: 'users',
-          key: 'ID',
+          key: 'id',
         },
       },
       quantity: Sequelize.DataTypes.FLOAT,

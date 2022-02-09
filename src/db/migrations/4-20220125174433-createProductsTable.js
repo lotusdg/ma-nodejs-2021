@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('products', {
-      UUID: {
+      uuid: {
         type: Sequelize.DataTypes.UUID,
         defaultValue: Sequelize.DataTypes.UUIDV4,
         primaryKey: true,
@@ -9,18 +9,18 @@ module.exports = {
       },
       measure: Sequelize.DataTypes.STRING,
       measureValue: Sequelize.DataTypes.FLOAT,
-      typeID: {
+      typeId: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: 'types',
-          key: 'ID',
+          key: 'id',
         },
       },
-      itemID: {
+      itemId: {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: 'items',
-          key: 'ID',
+          key: 'Id',
         },
       },
       priceValue: Sequelize.DataTypes.STRING,

@@ -1,20 +1,20 @@
 function validateBodyReq(array) {
   array.forEach((obj) => {
     const {
-      UUID,
+      uuid,
       measure,
       measureValue,
       priceValue,
       deletedAt,
       createdAt,
       updatedAt,
-      itemID,
-      typeID,
+      itemId,
+      typeId,
       type,
       item,
     } = obj;
 
-    if (UUID !== undefined && typeof UUID !== 'string' && UUID.length !== 36) {
+    if (uuid !== undefined && typeof uuid !== 'string' && uuid.length !== 36) {
       throw new Error('"UUID" invalid format');
     }
     if (type.name !== undefined && typeof type.name !== 'string') {
@@ -65,14 +65,14 @@ function validateBodyReq(array) {
       throw new Error('"updatedAt" invalid format');
     }
     if (
-      itemID !== undefined &&
-      !(typeof itemID === 'number' || itemID === null)
+      itemId !== undefined &&
+      !(typeof itemID === 'number' || itemId === null)
     ) {
       throw new Error('"itemID" invalid format');
     }
     if (
-      typeID !== undefined &&
-      !(typeof typeID === 'number' || typeID === null)
+      typeId !== undefined &&
+      !(typeof typeID === 'number' || typeId === null)
     ) {
       throw new Error('"typeID" invalid format');
     }

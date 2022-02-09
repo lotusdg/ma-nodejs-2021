@@ -6,7 +6,7 @@ async function getAllOrders() {
       where: {
         deletedAt: null,
       },
-      attributes: { exclude: ['userID', 'productID'] },
+      attributes: { exclude: ['userId', 'productId'] },
       include: [{ model: user }, { model: product }],
     });
     if (!res[0]) {
@@ -19,13 +19,13 @@ async function getAllOrders() {
   }
 }
 
-const getOrderById = async (ID) => {
+const getOrderById = async (id) => {
   try {
-    if (!ID) {
+    if (!id) {
       throw new Error('ERROR: No order id defined');
     }
-    const res = await order.findByPk(ID, {
-      attributes: { exclude: ['userID', 'productID'] },
+    const res = await order.findByPk(id, {
+      attributes: { exclude: ['userId', 'productId'] },
       include: [{ model: user }, { model: product }],
     });
     if (!res || !res.dataValues) {
@@ -43,7 +43,7 @@ async function createOrder(obj) {
     const timestamp = Date.now();
     const res = await product.findOne({
       where: {
-        UUID: obj.productUUID,
+        uuid: obj.productUuid,
         deletedAt: null,
       },
     });
@@ -70,13 +70,13 @@ async function createOrder(obj) {
       throw new Error('We have less quantity than you want');
     }
     const result = await order.create({
-      productUUID: obj.productUUID,
+      productUuid: obj.productUuid,
       quantity: obj.quantity,
       status: 'in process',
       createdAt: timestamp,
       updateAt: timestamp,
       deletedAt: null,
-      userID: userRef.dataValues.ID,
+      userId: userRef.dataValues.id,
     });
     if (!result) {
       // eslint-disable-next-line quotes
@@ -89,9 +89,9 @@ async function createOrder(obj) {
   }
 }
 
-async function updateOrder({ orderID, ...obj }) {
+async function updateOrder({ orderId, ...obj }) {
   try {
-    if (!orderID) {
+    if (!orderId) {
       throw new Error('ERROR: No order id defined');
     }
     const res = await product.findOne({
@@ -108,7 +108,7 @@ async function updateOrder({ orderID, ...obj }) {
       throw new Error('We have less than you want');
     }
     const result = await order.update(obj, {
-      where: { ID: orderID },
+      where: { id: orderId },
       returning: true,
     });
     if (!result[1][0]) {
@@ -122,9 +122,9 @@ async function updateOrder({ orderID, ...obj }) {
   }
 }
 
-async function deleteOrder(orderID) {
+async function deleteOrder(orderId) {
   try {
-    if (!orderID) {
+    if (!orderId) {
       throw new Error('ERROR: No product id defined');
     }
     // await db.Product.destroy({ where: { id } });
@@ -133,7 +133,7 @@ async function deleteOrder(orderID) {
         deletedAt: Date.now(),
       },
       {
-        where: { ID: orderID },
+        where: { ID: orderId },
       },
     );
     if (res[0] !== 1) {

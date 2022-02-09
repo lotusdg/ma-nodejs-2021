@@ -5,23 +5,23 @@ const { validator } = require('./index');
 async function findOrCreateObj(obj) {
   try {
     validator([obj]);
-    const [{ ID: itemID }] = await db.item.findOrCreate({
-      attributes: ['ID'],
+    const [{ id: itemId }] = await db.item.findOrCreate({
+      attributes: ['id'],
       where: { name: obj.item },
     });
-    const [{ ID: typeID }] = await db.type.findOrCreate({
-      attributes: ['ID'],
+    const [{ id: typeId }] = await db.type.findOrCreate({
+      attributes: ['id'],
       where: { name: obj.type },
     });
     const similarProduct = await crud.getProductByTypeAndPrice(
-      typeID,
+      typeId,
       obj.priceValue,
     );
     if (!similarProduct) {
       return await db.product.create(
         {
-          itemID,
-          typeID,
+          itemId,
+          typeId,
           measure: obj.measure,
           measureValue: obj.measureValue,
           priceType: obj.priceType,
@@ -33,9 +33,9 @@ async function findOrCreateObj(obj) {
       );
     }
     return await crud.updateProduct({
-      UUID: similarProduct.dataValues.UUID,
-      itemID,
-      typeID,
+      uuid: similarProduct.dataValues.UUID,
+      itemId,
+      typeId,
       measure: similarProduct.dataValues.measure,
       measureValue: similarProduct.dataValues.measureValue + obj.measureValue,
       priceType: similarProduct.dataValues.priceType,
