@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       allowNull: false,
     },
+    productUuid: DataTypes.UUID,
+    typeId: DataTypes.INTEGER,
+    itemId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
     quantity: DataTypes.FLOAT,
     status: DataTypes.STRING,
   });

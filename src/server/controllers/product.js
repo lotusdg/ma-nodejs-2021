@@ -4,7 +4,7 @@ const services = require('../../services');
 
 async function createProduct(req, res) {
   try {
-    const { code, message } = await services.createProduct(req.body);
+    const { code, message } = await services.findOrCreate(req.body);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
@@ -13,7 +13,7 @@ async function createProduct(req, res) {
 
 async function getProductByUuid(req, res) {
   try {
-    const { code, message } = await services.getProductByUuid(req.query);
+    const { code, message } = await services.getProductByUuid(req.params.uuid);
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
@@ -22,7 +22,10 @@ async function getProductByUuid(req, res) {
 
 async function updateProduct(req, res) {
   try {
-    const { code, message } = await services.updateProduct(req.body);
+    const { code, message } = await services.updateProduct(
+      req.body,
+      req.params.uuid,
+    );
     resFinish(res, code, message);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message || e });
@@ -31,7 +34,7 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const { code } = await services.deleteProduct(req.query);
+    const { code } = await services.deleteProduct(req.params.uuid);
     resFinish(res, code);
   } catch (e) {
     resFinish(res, httpCodes.badReq, { error: e.message });

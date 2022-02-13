@@ -127,13 +127,12 @@ async function deleteOrder(orderId) {
     if (!orderId) {
       throw new Error('ERROR: No product id defined');
     }
-    // await db.Product.destroy({ where: { id } });
     const res = await order.update(
       {
         deletedAt: Date.now(),
       },
       {
-        where: { ID: orderId },
+        where: { id: orderId },
       },
     );
     if (res[0] !== 1) {

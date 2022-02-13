@@ -20,10 +20,11 @@ module.exports = {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: 'items',
-          key: 'Id',
+          key: 'id',
         },
       },
       priceValue: Sequelize.DataTypes.STRING,
+      priceType: Sequelize.DataTypes.STRING,
       deletedAt: Sequelize.DataTypes.DATE,
       createdAt: Sequelize.DataTypes.DATE,
       updatedAt: Sequelize.DataTypes.DATE,

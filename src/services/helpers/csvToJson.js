@@ -1,7 +1,7 @@
 const { Transform } = require('stream');
 const { chunkToJson } = require('./chunkToJson');
 const { deleteDoubles } = require('./deleteDoubles');
-const { findOrCreateObj } = require('./findOrCreateObj');
+const { findOrCreate } = require('../product');
 
 function createCsvToJsonOld() {
   let isFirstChunk = true;
@@ -46,7 +46,7 @@ function createCsvToJsonOld() {
     for (const obj of chunkWithoutDoubles) {
       try {
         // eslint-disable-next-line no-await-in-loop
-        await findOrCreateObj(obj);
+        await findOrCreate(obj);
       } catch (err) {
         console.error(err.message || err);
         throw new Error(err);
