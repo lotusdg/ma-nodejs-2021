@@ -7,11 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     productUuid: DataTypes.UUID,
-    typeId: DataTypes.INTEGER,
-    itemId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
     quantity: DataTypes.FLOAT,
     status: DataTypes.STRING,
+    deletedAt: DataTypes.DATE,
   });
 
   Order.associate = (models) => {

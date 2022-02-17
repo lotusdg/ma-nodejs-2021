@@ -33,6 +33,8 @@ async function getProductByUuid(params) {
         uuid,
         deletedAt: null,
       },
+      attributes: { exclude: ['itemId', 'typeId'] },
+      include: [{ model: db.item }, { model: db.type }],
     });
 
     if (result.length === 0) {
@@ -41,7 +43,7 @@ async function getProductByUuid(params) {
       });
     }
 
-    return createResponse(httpCodes.ok, { message: result[0] });
+    return createResponse(httpCodes.ok, result[0]);
   } catch (e) {
     return createResponse(httpCodes.badReq, { error: e.message || e });
   }

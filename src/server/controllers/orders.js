@@ -13,7 +13,7 @@ async function getAllOrders(req, res) {
 
 async function getOrderById(req, res) {
   try {
-    const result = await services.getOrderById(req.query.id);
+    const result = await services.getOrderById(req.params.id);
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });
@@ -32,7 +32,7 @@ async function createOrder(req, res) {
 async function updateOrder(req, res) {
   try {
     const result = await services.updateOrder({
-      id: req.query.id,
+      orderId: req.params.id,
       ...req.body,
     });
     resFinish(res, httpCodes.ok, result);
@@ -43,7 +43,7 @@ async function updateOrder(req, res) {
 
 async function deleteOrderIfExists(req, res) {
   try {
-    const result = await services.deleteOrder(req.query.id);
+    const result = await services.deleteOrder(req.params.id);
     resFinish(res, httpCodes.ok, result);
   } catch (err) {
     resFinish(res, httpCodes.badReq, { error: err.message || err });

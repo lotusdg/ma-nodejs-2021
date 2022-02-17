@@ -96,7 +96,7 @@ async function updateOrder({ orderId, ...obj }) {
     }
     const res = await product.findOne({
       where: {
-        id: obj.productId,
+        uuid: obj.productUuid,
         deletedAt: null,
       },
     });
@@ -122,17 +122,19 @@ async function updateOrder({ orderId, ...obj }) {
   }
 }
 
-async function deleteOrder(orderId) {
+async function deleteOrder(id) {
   try {
-    if (!orderId) {
+    if (!id) {
       throw new Error('ERROR: No product id defined');
     }
+    const timestamp = Date.now();
     const res = await order.update(
       {
-        deletedAt: Date.now(),
+        status: 'deleted',
+        deletedAt: timestamp,
       },
       {
-        where: { id: orderId },
+        where: { id },
       },
     );
     if (res[0] !== 1) {
