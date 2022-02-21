@@ -1,15 +1,8 @@
 function findTopPrice(array) {
-  if (!Array.isArray(array)) {
-    array = require('../data.json');
-  }
-
   const compare = (a, b) => {
-    const firstPrice =
-      (a.pricePerKilo || a.pricePerItem).replace(',', '.').slice(1) *
-      (a.weight || a.quantity);
+    const firstPrice = a.priceValue.replace(',', '.').slice(1) * a.measureValue;
     const secondPrice =
-      (b.pricePerKilo || b.pricePerItem).replace(',', '.').slice(1) *
-      (b.weight || b.quantity);
+      b.priceValue.replace(',', '.').slice(1) * b.measureValue;
     return firstPrice - secondPrice;
   };
 

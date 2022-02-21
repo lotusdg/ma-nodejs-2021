@@ -5,11 +5,11 @@ const common = express.Router();
 
 common.get('/', controllers.home);
 
-common.get('/filter', controllers.filter);
+common.get('/filter', controllers.getFilter);
 common.post('/filter', controllers.postFilter);
 
-common.get('/topprice', controllers.topPrice);
-common.post('/topprice', controllers.findTopPricePost);
+common.get('/topprice', controllers.getTopPrice);
+common.post('/topprice', controllers.postTopPrice);
 
 common.get('/commonprice', controllers.commonPriceGET);
 common.post('/commonprice', controllers.commonPricePost);

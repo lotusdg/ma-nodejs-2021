@@ -1,10 +1,10 @@
-function addPrice(array) {
-  return array.map((element) => {
-    const pricePerQuantity = element.pricePerKilo || element.pricePerItem;
-    const quantity = element.quantity || element.weight;
-    const price = pricePerQuantity.substring(1).replace(/,/, '.') * quantity;
-    return { ...element, price };
-  });
-}
+const addTotalPriceOfFruit = (obj) => {
+  const price =
+    obj.priceValue.substring(1).replace(/,/, '.') * obj.measureValue;
+  const returnedObj = obj.dataValues || obj;
+  return { ...returnedObj, price };
+};
+
+const addPrice = (array) => array.map(addTotalPriceOfFruit);
 
 module.exports = { addPrice };
