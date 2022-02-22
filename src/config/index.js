@@ -4,8 +4,11 @@ require('dotenv').config();
 
 const config = {
   portEnv: process.env.PORT || 3000,
-  loginEnv: process.env.LOGIN,
-  passEnv: process.env.PASSWORD,
+  // loginEnv: process.env.LOGIN,
+  // passEnv: process.env.PASSWORD,
+  secretKey:
+    process.env.ACCESS_TOKEN_SECRET ||
+    console.error('ACCESS_TOKEN_SECRET is required'),
   db: {
     username: process.env.DB_USERNAME || fatal('FATAL: DB_USER is not defined'),
     host: process.env.DB_HOST || fatal('FATAL: DB_HOST is not defined'),

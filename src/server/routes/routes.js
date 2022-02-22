@@ -6,16 +6,18 @@ const product = require('./product');
 const orders = require('./orders');
 const discount = require('./discount');
 const common = require('./common');
+const login = require('./login');
 const { authorization, errorHandler } = require('../middlewares');
 const { httpCodes } = require('../../services/helpers');
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
-server.use(authorization);
+// server.use(authorization);
 server.use('/product', product);
 server.use('/orders', orders);
 server.use('/discount', discount);
+server.use('/login', login);
 server.use(common);
 server.use((req, res) =>
   res.status(httpCodes.notFound).send({ error: `Page not found ${req.path}` }),
