@@ -10,28 +10,15 @@ const authorizationMiddleware = (req, res, next) => {
   if (!token) {
     return res.status(httpCodes.unauthorized).send({ error: 'Non authorized' });
   }
-
+  // eslint-disable-next-line consistent-return
   jwt.verify(token, secretKey, (err, user) => {
-    console.log(err);
-    if (err) return res.status(httpCodes.badReq);
+    if (err) {
+      console.log(err);
+      return res.status(httpCodes.badReq);
+    }
     req.user = user;
     next();
   });
-
-  // const typeAuth = 'Basic';
-  // if (!req.headers.authorization) {
-  //   return res
-  //     .status(httpCodes.unauthorized)
-  //     .send({ error: 'Authorization header is absent' });
-  // }
-
-  // const [type, token] = req.headers.authorization.split(' ');
-  // const [login, pass] = Buffer.from(token, 'base64').toString().split(':');
-
-  // if (type !== typeAuth || login !== loginEnv || pass !== passEnv) {
-  //   return res.status(httpCodes.unauthorized).send({ error: 'Non authorized' });
-  // }
-  // next();
 };
 
 module.exports = { authorizationMiddleware };

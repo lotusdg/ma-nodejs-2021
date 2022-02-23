@@ -4,8 +4,6 @@ require('dotenv').config();
 
 const config = {
   portEnv: process.env.PORT || 3000,
-  // loginEnv: process.env.LOGIN,
-  // passEnv: process.env.PASSWORD,
   secretKey:
     process.env.ACCESS_TOKEN_SECRET ||
     console.error('ACCESS_TOKEN_SECRET is required'),

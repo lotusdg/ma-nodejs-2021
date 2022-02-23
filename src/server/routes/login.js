@@ -1,4 +1,5 @@
 const express = require('express');
+const { secretKey } = require('../../config');
 
 const login = express.Router();
 const { user } = require('../../db');
@@ -17,7 +18,7 @@ login.post('/', async (req, res, next) => {
       throw new Error('bad username or password');
     }
 
-    const token = generateAccessToken(username);
+    const token = generateAccessToken(username, secretKey);
 
     res.json({ token });
   } catch (err) {
