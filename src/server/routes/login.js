@@ -1,28 +1,48 @@
 const express = require('express');
-const { secretKey } = require('../../config');
+const {
+  accessTokenSecret,
+  passwordSecret,
+  refreshTokenSecret,
+} = require('../../config');
 
 const login = express.Router();
 const { user } = require('../../db');
-const { generateAccessToken } = require('../../utils');
+const {
+  generateAccessToken,
+  hashPassword,
+  generateRefreshToken,
+} = require('../../utils');
 
-login.post('/', async (req, res, next) => {
+// eslint-disable-next-line consistent-return
+login.post('/', async (req, res) => {
   try {
     const { username, password } = req.body;
-    const result = await user.findOne({
+    const resFindUser = await user.findOne({
       where: {
         login: username,
       },
     });
-
-    if (!result || result.password !== password) {
+    if (
+      !resFindUser ||
+      resFindUser.password !== hashPassword(password, passwordSecret)
+    ) {
       throw new Error('bad username or password');
     }
+    const accessToken = generateAccessToken(username, accessTokenSecret);
+    const refreshToken = generateRefreshToken(username, refreshTokenSecret);
 
-    const token = generateAccessToken(username, secretKey);
+    const resUpdUserToken = await user.update(
+      { refreshToken },
+      { where: { login: username } },
+    );
+    if (!resUpdUserToken) {
+      throw new Error('update User');
+    }
 
-    res.json({ token });
+    return res.send({ accessToken, refreshToken });
   } catch (err) {
-    return next(err);
+    console.error('Error:', err.message || err);
+    return res.send({ error: err.message || err });
   }
 });
 

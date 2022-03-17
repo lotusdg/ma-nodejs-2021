@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     login: DataTypes.STRING,
     password: DataTypes.STRING,
+    refreshToken: DataTypes.STRING,
   });
 
   User.associate = (models) => {

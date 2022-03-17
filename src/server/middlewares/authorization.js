@@ -1,7 +1,7 @@
 // const { loginEnv, passEnv } = require('../../config');
 const jwt = require('jsonwebtoken');
 const { httpCodes } = require('../../services/helpers/httpCodes');
-const { secretKey } = require('../../config');
+const { accessTokenSecret } = require('../../config');
 
 // eslint-disable-next-line consistent-return
 const authorizationMiddleware = (req, res, next) => {
@@ -11,10 +11,12 @@ const authorizationMiddleware = (req, res, next) => {
     return res.status(httpCodes.unauthorized).send({ error: 'Non authorized' });
   }
   // eslint-disable-next-line consistent-return
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, accessTokenSecret, (err, user) => {
     if (err) {
-      console.log(err);
-      return res.status(httpCodes.badReq);
+      console.error('Error:', err.message || err);
+      return res
+        .status(httpCodes.unauthorized)
+        .send({ error: `Non authorized. ${err.message || err}` });
     }
     req.user = user;
     next();

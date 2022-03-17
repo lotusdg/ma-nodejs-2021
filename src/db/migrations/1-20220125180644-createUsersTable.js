@@ -9,6 +9,7 @@ module.exports = {
       },
       login: Sequelize.DataTypes.STRING,
       password: Sequelize.DataTypes.STRING,
+      refreshToken: Sequelize.DataTypes.STRING,
       deletedAt: Sequelize.DataTypes.DATE,
       createdAt: Sequelize.DataTypes.DATE,
       updatedAt: Sequelize.DataTypes.DATE,
