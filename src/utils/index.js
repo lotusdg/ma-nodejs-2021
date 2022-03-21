@@ -11,7 +11,7 @@ function fatal(message) {
 }
 
 function generateAccessToken(username, secretKey) {
-  return jwt.sign({ username }, secretKey, { expiresIn: '24h' });
+  return jwt.sign({ username }, secretKey, { expiresIn: '60s' });
 }
 
 function generateRefreshToken(username, secretKey) {
